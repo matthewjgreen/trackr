@@ -81,11 +81,6 @@ export default function Calendar() {
     if (next === 'month') setView({ year: selected.getFullYear(), month: selected.getMonth() })
   }
 
-  function goToday() {
-    setView({ year: today.getFullYear(), month: today.getMonth() })
-    setSelected(today)
-  }
-
   const selectedItems = (byDay[dayKey(selected)] ?? []).sort(
     (a, b) => new Date(a.dueDate) - new Date(b.dueDate)
   )
@@ -134,12 +129,6 @@ export default function Calendar() {
             className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold dark:border-slate-600 dark:bg-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700"
           >
             ‹
-          </button>
-          <button
-            onClick={goToday}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold dark:border-slate-600 dark:bg-slate-700 text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
-          >
-            Today
           </button>
           <button
             onClick={shiftNext}

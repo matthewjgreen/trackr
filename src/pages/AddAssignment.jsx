@@ -4,13 +4,14 @@ import { useAssignments } from '../context/AssignmentsContext.jsx'
 import { STATUSES, DEFAULT_STATUS } from '../lib/status.js'
 import { typeIcon, PaperclipIcon, LinkIcon } from '../components/Icons.jsx'
 
-const TYPES = ['Test', 'Quiz', 'Homework', 'Project']
+const TYPES = ['Test', 'Quiz', 'Homework', 'Project', 'Paper', 'Application', 'Other']
 
 const emptyForm = {
   title: '',
   courseId: '',
   dueDate: '',
   type: 'Test',
+  customType: '',
   priority: 'Normal',
   status: DEFAULT_STATUS,
   notes: '',
@@ -32,7 +33,7 @@ export default function AddAssignment() {
     return {
       title: form.title.trim(),
       courseId: form.courseId,
-      type: form.type,
+      type: form.type === 'Other' ? form.customType.trim() || 'Other' : form.type,
       subtitle: course ? course.name : 'General',
       dueDate: form.dueDate ? new Date(form.dueDate).toISOString() : new Date().toISOString(),
       priority: form.priority,
@@ -139,6 +140,14 @@ export default function AddAssignment() {
                 )
               })}
             </div>
+            {form.type === 'Other' && (
+              <input
+                value={form.customType}
+                onChange={(e) => set('customType', e.target.value)}
+                placeholder="Enter a custom type (e.g. Lab Report)"
+                className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition focus:border-brand-300 focus:bg-white focus:ring-2 focus:ring-brand-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:focus:bg-slate-700"
+              />
+            )}
           </div>
 
           <div className="mt-5">

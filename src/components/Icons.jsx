@@ -103,9 +103,22 @@ export const notifIcon = {
   overdue: AlertIcon,
 }
 
+export const PaperIcon = (p) => (
+  <svg {...base} {...p}><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 8h6M9 12h6M9 16h4" /></svg>
+)
+export const ApplicationIcon = (p) => (
+  <svg {...base} {...p}><rect x="6" y="4" width="12" height="17" rx="2" /><path d="M9 3h6v3H9z" /><path d="M9 13l2 2 4-4" /></svg>
+)
+export const OtherIcon = (p) => (
+  <svg {...base} {...p}><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0l-7.2-7.2A2 2 0 0 1 3 12V5a2 2 0 0 1 2-2h7a2 2 0 0 1 1.4.6l7.2 7.2a2 2 0 0 1 0 2.6z" /><path d="M7.5 7.5h.01" /></svg>
+)
+
 export const typeIcon = {
   Test: TestIcon,
   Quiz: QuizIcon,
   Homework: HomeworkIcon,
   Project: ProjectIcon,
+  Paper: PaperIcon,
+  Application: ApplicationIcon,
+  Other: OtherIcon,
 }
