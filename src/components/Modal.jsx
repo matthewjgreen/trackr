@@ -24,7 +24,7 @@ export default function Modal({ open, onClose, title, children }) {
         </div>
         <button
           onClick={onClose}
-          className="mt-5 w-full rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+          className="mt-5 w-full rounded-xl bg-brand-600 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700"
         >
           Got it
         </button>

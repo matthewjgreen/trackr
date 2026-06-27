@@ -57,7 +57,7 @@ const inputClass =
   'mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-brand-300 focus:bg-white focus:ring-2 focus:ring-brand-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:focus:bg-slate-700'
 const labelClass = 'block text-sm font-semibold text-slate-600 dark:text-slate-300'
 const primaryBtn =
-  'rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:bg-blue-700 disabled:opacity-60'
+  'rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-700 disabled:opacity-60'
 
 function Status({ msg }) {
   if (!msg) return null
@@ -316,7 +316,7 @@ function Toggle({ label, description, checked, onChange }) {
         aria-checked={checked}
         onClick={() => onChange(!checked)}
         className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition ${
-          checked ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-600'
+          checked ? 'bg-brand-600' : 'bg-slate-300 dark:bg-slate-600'
         }`}
       >
         <span
@@ -504,7 +504,7 @@ function CoursesSection() {
           placeholder="e.g. MATH 240"
           className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
         />
-        <button type="submit" disabled={busy} className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60">
+        <button type="submit" disabled={busy} className="flex items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
           <PlusIcon className="h-4 w-4" /> Add
         </button>
       </form>

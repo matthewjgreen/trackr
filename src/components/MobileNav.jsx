@@ -12,20 +12,30 @@ const items = [
 
 export default function MobileNav() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-slate-200 bg-white/95 backdrop-blur md:hidden dark:border-slate-700 dark:bg-slate-800/95">
+    <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden dark:border-slate-700 dark:bg-slate-800/95">
       {items.map(({ to, label, icon: Icon, end }) => (
         <NavLink
           key={to}
           to={to}
           end={end}
           className={({ isActive }) =>
-            `flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition ${
-              isActive ? 'text-brand-600' : 'text-slate-400'
+            `flex flex-1 flex-col items-center gap-1 py-2 text-[11px] font-medium transition ${
+              isActive ? 'text-brand-600 dark:text-brand-300' : 'text-slate-400'
             }`
           }
         >
-          <Icon className="h-5 w-5" />
-          {label}
+          {({ isActive }) => (
+            <>
+              <span
+                className={`flex h-7 w-12 items-center justify-center rounded-full transition ${
+                  isActive ? 'bg-brand-50 dark:bg-brand-500/15' : ''
+                }`}
+              >
+                <Icon className="h-5 w-5" />
+              </span>
+              {label}
+            </>
+          )}
         </NavLink>
       ))}
     </nav>

@@ -216,7 +216,7 @@ export default function AddAssignment() {
             <button
               onClick={() => handleSave(false)}
               disabled={busy}
-              className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-blue-700 disabled:opacity-60"
+              className="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-700 disabled:opacity-60"
             >
               {busy ? 'Saving…' : 'Save Assignment'}
             </button>

@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useAssignments, formatDueLabel, courseById } from '../context/AssignmentsContext.jsx'
+import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
 import { accentFor } from '../lib/accents.js'
-import { SearchIcon, typeIcon } from '../components/Icons.jsx'
+import { dueMeta, bucketFor, DUE_BUCKETS } from '../lib/due.js'
 import StatusSelect from '../components/StatusSelect.jsx'
+import EmptyState from '../components/EmptyState.jsx'
+import { SkeletonRows } from '../components/Skeleton.jsx'
+import { SearchIcon, ListIcon, typeIcon } from '../components/Icons.jsx'
 
 const FILTERS = [
   { key: 'all', label: 'All' },
@@ -13,12 +16,11 @@ const FILTERS = [
 ]
 
 export default function Assignments() {
-  const { assignments, courses, setStatus, removeAssignment } = useAssignments()
+  const { assignments, courses, setStatus, removeAssignment, loading } = useAssignments()
   const [searchParams, setSearchParams] = useSearchParams()
   const [filter, setFilter] = useState('all')
   const [query, setQuery] = useState(searchParams.get('q') ?? '')
 
-  // Keep the input in sync when arriving via the top-bar search (?q=…).
   useEffect(() => {
     setQuery(searchParams.get('q') ?? '')
   }, [searchParams])
@@ -45,6 +47,61 @@ export default function Assignments() {
       return haystack.includes(term)
     })
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+
+  // Group into Overdue / Today / This week / Later / Completed.
+  const grouped = DUE_BUCKETS.map((b) => ({
+    ...b,
+    items: filtered.filter((a) => bucketFor(a) === b.key),
+  })).filter((g) => g.items.length > 0)
+
+  function renderRow(a) {
+    const Icon = typeIcon[a.type] ?? typeIcon.Homework
+    const course = courseById(courses, a.courseId)
+    const accent = accentFor(course?.color)
+    const done = a.status === 'completed'
+    const dm = dueMeta(a.dueDate)
+    return (
+      <li
+        key={a.id}
+        className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card dark:bg-slate-800 md:gap-4"
+      >
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${accent.soft}`}>
+          <Icon className="h-5 w-5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className={`truncate text-sm font-bold ${done ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-100'}`}>
+            {a.title}
+          </p>
+          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+            {course && (
+              <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${accent.soft}`}>
+                {course.name}
+              </span>
+            )}
+            <span className="text-xs text-slate-400">{a.type}</span>
+            {!done && (
+              <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${dm.tone}`}>
+                {dm.label}
+              </span>
+            )}
+          </div>
+        </div>
+        {a.priority === 'Critical' && !done && (
+          <span className="hidden shrink-0 rounded-md bg-rose-50 px-2 py-1 text-[11px] font-bold text-rose-500 sm:inline dark:bg-rose-500/10 dark:text-rose-400">
+            Critical
+          </span>
+        )}
+        <StatusSelect value={a.status} onChange={(s) => setStatus(a.id, s)} />
+        <button
+          onClick={() => removeAssignment(a.id)}
+          className="shrink-0 text-xs font-medium text-slate-300 hover:text-rose-500"
+          title="Delete"
+        >
+          ✕
+        </button>
+      </li>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-6 md:px-8">
@@ -77,7 +134,7 @@ export default function Assignments() {
         )}
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-5 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
           <button
             key={f.key}
@@ -93,48 +150,27 @@ export default function Assignments() {
         ))}
       </div>
 
-      <ul className="space-y-3">
-        {filtered.map((a) => {
-          const Icon = typeIcon[a.type] ?? typeIcon.Homework
-          const accent = accentFor(courseById(courses, a.courseId)?.color).soft
-          return (
-            <li
-              key={a.id}
-              className="flex items-center gap-3 rounded-2xl bg-white dark:bg-slate-800 p-4 shadow-card md:gap-4"
-            >
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${accent}`}>
-                <Icon className="h-5 w-5" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className={`truncate text-sm font-bold ${a.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-100'}`}>
-                  {a.title}
-                </p>
-                <p className="truncate text-xs text-slate-400">
-                  {a.subtitle} · {a.type} · {formatDueLabel(a.dueDate)}
-                </p>
-              </div>
-              {a.priority === 'Critical' && a.status !== 'completed' && (
-                <span className="hidden shrink-0 rounded-md bg-rose-50 px-2 py-1 text-[11px] font-bold text-rose-500 sm:inline">
-                  Critical
+      {loading ? (
+        <SkeletonRows count={5} />
+      ) : grouped.length === 0 ? (
+        <EmptyState icon={ListIcon} className="bg-white py-12 dark:bg-slate-800">
+          {term ? `No assignments match "${query.trim()}".` : 'No assignments yet — add your first one.'}
+        </EmptyState>
+      ) : (
+        <div className="space-y-6">
+          {grouped.map((g) => (
+            <div key={g.key}>
+              <div className="mb-2 flex items-center gap-2 px-1">
+                <h3 className="text-xs font-bold uppercase tracking-wide text-slate-400">{g.label}</h3>
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:bg-slate-700 dark:text-slate-300">
+                  {g.items.length}
                 </span>
-              )}
-              <StatusSelect value={a.status} onChange={(s) => setStatus(a.id, s)} />
-              <button
-                onClick={() => removeAssignment(a.id)}
-                className="shrink-0 text-xs font-medium text-slate-300 hover:text-rose-500"
-                title="Delete"
-              >
-                ✕
-              </button>
-            </li>
-          )
-        })}
-        {filtered.length === 0 && (
-          <li className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center text-sm text-slate-400">
-            {term ? `No assignments match "${query.trim()}".` : 'No assignments here yet.'}
-          </li>
-        )}
-      </ul>
+              </div>
+              <ul className="space-y-3">{g.items.map(renderRow)}</ul>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

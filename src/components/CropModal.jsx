@@ -65,7 +65,7 @@ export default function CropModal({ imageSrc, open, busy, onCancel, onSave }) {
           <button
             onClick={handleSave}
             disabled={busy}
-            className="flex-1 rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-brand-600 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
           >
             {busy ? 'Saving…' : 'Save photo'}
           </button>

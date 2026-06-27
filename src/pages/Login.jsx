@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { isSupabaseConfigured } from '../lib/supabase.js'
+import Logo from '../components/Logo.jsx'
 
 export default function Login() {
   const { signIn, signUp } = useAuth()
@@ -48,8 +49,9 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-50 via-slate-50 to-fuchsia-50 px-4 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
       <div className="w-full max-w-sm">
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl font-extrabold text-brand-700">Trackr</h1>
+        <div className="mb-6 flex items-center justify-center gap-2.5">
+          <Logo size={34} />
+          <h1 className="text-2xl font-extrabold text-brand-700 dark:text-brand-300">Trackr</h1>
         </div>
 
         <div className="rounded-2xl bg-white p-6 shadow-soft dark:bg-slate-800">
@@ -96,7 +98,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={busy}
-              className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-blue-700 disabled:opacity-60"
+              className="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-700 disabled:opacity-60"
             >
               {busy ? 'Please wait…' : mode === 'signin' ? 'Sign In' : 'Sign Up'}
             </button>

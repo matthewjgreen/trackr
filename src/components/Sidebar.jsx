@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import Modal from './Modal.jsx'
+import Logo from './Logo.jsx'
 import {
   DashboardIcon, CalendarIcon, ListIcon, SettingsIcon,
   PlusIcon, HelpIcon, LogoutIcon,
@@ -22,8 +23,9 @@ export default function Sidebar() {
   return (
     <>
     <aside className="hidden md:flex md:w-60 lg:w-64 shrink-0 flex-col border-r border-slate-200/70 bg-white px-4 py-6 dark:border-slate-700 dark:bg-slate-800">
-      <div className="px-3 mb-8">
-        <h1 className="text-xl font-extrabold text-brand-700">Trackr</h1>
+      <div className="px-3 mb-8 flex items-center gap-2">
+        <Logo size={28} />
+        <h1 className="text-xl font-extrabold text-brand-700 dark:text-brand-300">Trackr</h1>
       </div>
 
       <nav className="flex-1 space-y-1">
@@ -48,7 +50,7 @@ export default function Sidebar() {
 
       <button
         onClick={() => navigate('/assignments/new')}
-        className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-blue-700"
+        className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-700"
       >
         <PlusIcon className="h-5 w-5" />
         Add Assignment

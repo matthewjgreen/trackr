@@ -3,6 +3,7 @@ import { useAuth } from './context/AuthContext.jsx'
 import { AssignmentsProvider } from './context/AssignmentsContext.jsx'
 import { NotificationsProvider } from './context/NotificationsContext.jsx'
 import { NotesProvider } from './context/NotesContext.jsx'
+import { ToastProvider } from './context/ToastContext.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import MobileNav from './components/MobileNav.jsx'
 import MobileHeader from './components/MobileHeader.jsx'
@@ -29,13 +30,15 @@ export default function App() {
   if (!session) return <Login />
 
   return (
-    <AssignmentsProvider>
-      <NotificationsProvider>
-        <NotesProvider>
-          <AuthedApp />
-        </NotesProvider>
-      </NotificationsProvider>
-    </AssignmentsProvider>
+    <ToastProvider>
+      <AssignmentsProvider>
+        <NotificationsProvider>
+          <NotesProvider>
+            <AuthedApp />
+          </NotesProvider>
+        </NotificationsProvider>
+      </AssignmentsProvider>
+    </ToastProvider>
   )
 }
 
@@ -54,7 +57,7 @@ function AuthedApp() {
         <MobileHeader />
         <Topbar />
 
-        <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+        <main className="flex-1 overflow-y-auto pb-24 md:pb-0">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/assignments" element={<Assignments />} />

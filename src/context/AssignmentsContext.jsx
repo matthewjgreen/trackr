@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from './AuthContext.jsx'
+import { useToast } from './ToastContext.jsx'
 import { DEFAULT_COURSES } from '../data/seed.js'
 import { DEFAULT_STATUS } from '../lib/status.js'
 
@@ -42,6 +43,7 @@ function assignmentToRow(data) {
 
 export function AssignmentsProvider({ children }) {
   const { user } = useAuth()
+  const toast = useToast()
   const [courses, setCourses] = useState([])
   const [assignments, setAssignments] = useState([])
   const [loading, setLoading] = useState(true)
@@ -141,10 +143,12 @@ export function AssignmentsProvider({ children }) {
       .single()
     if (error) {
       setError(error.message)
+      toast('Could not add assignment', 'err')
       return null
     }
     const created = assignmentFromRow(row)
     setAssignments((prev) => [...prev, created])
+    toast('Assignment added')
     return created.id
   }
 
@@ -174,24 +178,24 @@ export function AssignmentsProvider({ children }) {
     const { error } = await supabase.from('assignments').delete().eq('id', id)
     if (error) {
       setError(error.message)
+      toast('Could not delete assignment', 'err')
       setAssignments(prev) // rollback
+    } else {
+      toast('Assignment deleted')
     }
   }
 
   // Stats are derived from the user's real data.
   const stats = useMemo(() => {
+    const now = new Date()
     const total = assignments.length
     const completed = assignments.filter((a) => a.status === 'completed').length
     const inProgress = assignments.filter((a) => a.status === 'in_progress').length
+    const overdue = assignments.filter(
+      (a) => a.status !== 'completed' && new Date(a.dueDate) < now
+    ).length
     const percent = total === 0 ? 0 : Math.round((completed / total) * 100)
-    return {
-      total,
-      completed,
-      inProgress,
-      percent,
-      weeklyTasks: total - completed,
-      weeklyCompleted: completed,
-    }
+    return { total, completed, inProgress, overdue, percent }
   }, [assignments])
 
   const value = {

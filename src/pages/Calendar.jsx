@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { useAssignments, formatDueLabel, courseById } from '../context/AssignmentsContext.jsx'
 import { accentFor } from '../lib/accents.js'
 import { statusMeta } from '../lib/status.js'
-import { typeIcon } from '../components/Icons.jsx'
+import EmptyState from '../components/EmptyState.jsx'
+import { typeIcon, CalendarIcon } from '../components/Icons.jsx'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const MONTHS = [
@@ -211,6 +212,10 @@ export default function Calendar() {
             {MONTHS[selected.getMonth()]} {selected.getDate()}
           </h3>
 
+          {selectedItems.length === 0 && (
+            <EmptyState icon={CalendarIcon} className="mt-4">Nothing due this day.</EmptyState>
+          )}
+
           <ul className="mt-4 space-y-3">
             {selectedItems.map((a) => {
               const Icon = typeIcon[a.type] ?? typeIcon.Homework
@@ -236,11 +241,6 @@ export default function Calendar() {
                 </li>
               )
             })}
-            {selectedItems.length === 0 && (
-              <li className="rounded-xl border border-dashed border-slate-200 dark:border-slate-700 p-6 text-center text-xs text-slate-400">
-                Nothing due this day.
-              </li>
-            )}
           </ul>
         </div>
       </div>
