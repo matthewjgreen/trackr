@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useAssignments, formatDueLabel, courseById } from '../context/AssignmentsContext.jsx'
 import { accentFor } from '../lib/accents.js'
+import { statusMeta } from '../lib/status.js'
 import { typeIcon } from '../components/Icons.jsx'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -134,11 +135,12 @@ export default function Calendar() {
                       return (
                         <div
                           key={a.id}
-                          className={`truncate rounded px-1 py-0.5 text-[10px] font-medium ${accent.pill} ${
-                            a.completed ? 'line-through opacity-60' : ''
+                          className={`flex items-center gap-1 rounded px-1 py-0.5 text-[10px] font-medium ${accent.pill} ${
+                            a.status === 'completed' ? 'line-through opacity-60' : ''
                           }`}
                         >
-                          {a.title}
+                          <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${statusMeta(a.status).dot}`} />
+                          <span className="truncate">{a.title}</span>
                         </div>
                       )
                     })}
@@ -177,11 +179,14 @@ export default function Calendar() {
                     <Icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={`truncate text-sm font-semibold ${a.completed ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-100'}`}>
+                    <p className={`truncate text-sm font-semibold ${a.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-100'}`}>
                       {a.title}
                     </p>
                     <p className="truncate text-xs text-slate-400">{formatDueLabel(a.dueDate)}</p>
                   </div>
+                  <span className={`shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold ${statusMeta(a.status).pill}`}>
+                    {statusMeta(a.status).label}
+                  </span>
                 </li>
               )
             })}

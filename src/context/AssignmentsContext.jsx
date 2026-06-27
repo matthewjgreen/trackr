@@ -2,11 +2,15 @@ import { createContext, useContext, useEffect, useMemo, useState, useCallback } 
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from './AuthContext.jsx'
 import { DEFAULT_COURSES } from '../data/seed.js'
+import { DEFAULT_STATUS } from '../lib/status.js'
 
 const AssignmentsContext = createContext(null)
 
 // --- row <-> app-object mappers (DB is snake_case, app is camelCase) ---
 function assignmentFromRow(r) {
+  // `status` is canonical; fall back to the legacy `completed` boolean for rows
+  // created before the status column existed.
+  const status = r.status ?? (r.completed ? 'completed' : DEFAULT_STATUS)
   return {
     id: r.id,
     title: r.title,
@@ -15,12 +19,14 @@ function assignmentFromRow(r) {
     subtitle: r.subtitle ?? '',
     dueDate: r.due_date,
     priority: r.priority,
-    completed: r.completed,
+    status,
+    completed: status === 'completed',
     notes: r.notes ?? '',
   }
 }
 
 function assignmentToRow(data) {
+  const status = data.status ?? DEFAULT_STATUS
   return {
     title: data.title,
     course_id: data.courseId || null,
@@ -28,7 +34,8 @@ function assignmentToRow(data) {
     subtitle: data.subtitle ?? '',
     due_date: data.dueDate,
     priority: data.priority,
-    completed: data.completed ?? false,
+    status,
+    completed: status === 'completed', // keep the legacy mirror in sync
     notes: data.notes ?? '',
   }
 }
@@ -143,8 +150,10 @@ export function AssignmentsProvider({ children }) {
 
   async function updateAssignment(id, patch) {
     const prev = assignments
-    // Optimistic update so the UI feels instant.
-    setAssignments((p) => p.map((a) => (a.id === id ? { ...a, ...patch } : a)))
+    // Optimistic update so the UI feels instant. Keep the `completed` mirror in
+    // sync locally when the status changes.
+    const synced = patch.status ? { ...patch, completed: patch.status === 'completed' } : patch
+    setAssignments((p) => p.map((a) => (a.id === id ? { ...a, ...synced } : a)))
     const { error } = await supabase
       .from('assignments')
       .update(assignmentToRow({ ...prev.find((a) => a.id === id), ...patch }))
@@ -155,10 +164,8 @@ export function AssignmentsProvider({ children }) {
     }
   }
 
-  function toggleComplete(id) {
-    const current = assignments.find((a) => a.id === id)
-    if (!current) return
-    return updateAssignment(id, { completed: !current.completed })
+  function setStatus(id, status) {
+    return updateAssignment(id, { status })
   }
 
   async function removeAssignment(id) {
@@ -174,11 +181,13 @@ export function AssignmentsProvider({ children }) {
   // Stats are derived from the user's real data.
   const stats = useMemo(() => {
     const total = assignments.length
-    const completed = assignments.filter((a) => a.completed).length
+    const completed = assignments.filter((a) => a.status === 'completed').length
+    const inProgress = assignments.filter((a) => a.status === 'in_progress').length
     const percent = total === 0 ? 0 : Math.round((completed / total) * 100)
     return {
       total,
       completed,
+      inProgress,
       percent,
       weeklyTasks: total - completed,
       weeklyCompleted: completed,
@@ -196,7 +205,7 @@ export function AssignmentsProvider({ children }) {
     removeCourse,
     addAssignment,
     updateAssignment,
-    toggleComplete,
+    setStatus,
     removeAssignment,
     reload: loadData,
   }

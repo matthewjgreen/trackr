@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAssignments } from '../context/AssignmentsContext.jsx'
+import { STATUSES, DEFAULT_STATUS } from '../lib/status.js'
 import { typeIcon, PaperclipIcon, LinkIcon } from '../components/Icons.jsx'
 
 const TYPES = ['Test', 'Quiz', 'Homework', 'Project']
@@ -11,6 +12,7 @@ const emptyForm = {
   dueDate: '',
   type: 'Test',
   priority: 'Normal',
+  status: DEFAULT_STATUS,
   notes: '',
 }
 
@@ -34,6 +36,7 @@ export default function AddAssignment() {
       subtitle: course ? course.name : 'General',
       dueDate: form.dueDate ? new Date(form.dueDate).toISOString() : new Date().toISOString(),
       priority: form.priority,
+      status: form.status,
       notes: form.notes.trim(),
     }
   }
@@ -132,6 +135,30 @@ export default function AddAssignment() {
                     }`}
                   >
                     <Icon className="h-4 w-4" /> {t}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="mt-5">
+            <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300">Status</label>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {STATUSES.map((s) => {
+                const selected = form.status === s.value
+                return (
+                  <button
+                    key={s.value}
+                    type="button"
+                    onClick={() => set('status', s.value)}
+                    className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition ${
+                      selected
+                        ? 'border-brand-600 bg-brand-600 text-white shadow-soft'
+                        : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <span className={`h-2 w-2 rounded-full ${selected ? 'bg-white' : s.dot}`} />
+                    {s.label}
                   </button>
                 )
               })}

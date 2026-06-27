@@ -5,13 +5,14 @@ import { useTheme } from '../context/ThemeContext.jsx'
 import { accentFor } from '../lib/accents.js'
 import { bannerByKey } from '../lib/banners.js'
 import ProgressRing from '../components/ProgressRing.jsx'
+import StatusSelect from '../components/StatusSelect.jsx'
 import {
   ClockIcon, CheckCircleIcon, TrendIcon,
   PlusIcon, typeIcon,
 } from '../components/Icons.jsx'
 
 export default function Dashboard() {
-  const { assignments, courses, stats, toggleComplete } = useAssignments()
+  const { assignments, courses, stats, setStatus } = useAssignments()
   const { user, profile } = useAuth()
   const { banner } = useTheme()
   const navigate = useNavigate()
@@ -22,7 +23,7 @@ export default function Dashboard() {
     (user?.email?.split('@')[0] ?? 'there').replace(/^\w/, (c) => c.toUpperCase())
 
   const upcoming = [...assignments]
-    .filter((a) => !a.completed)
+    .filter((a) => a.status !== 'completed')
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
 
   const outlook = upcoming.slice(0, 3)
@@ -150,12 +151,7 @@ export default function Dashboard() {
                   </span>
                   <p className="text-[10px] uppercase tracking-wide text-slate-300">Priority</p>
                 </div>
-                <input
-                  type="checkbox"
-                  checked={a.completed}
-                  onChange={() => toggleComplete(a.id)}
-                  className="h-5 w-5 shrink-0 rounded-md border-slate-300 text-brand-600 focus:ring-brand-400"
-                />
+                <StatusSelect value={a.status} onChange={(s) => setStatus(a.id, s)} />
               </li>
             )
           })}

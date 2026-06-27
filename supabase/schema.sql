@@ -24,7 +24,8 @@ create table public.assignments (
   subtitle    text default '',
   due_date    timestamptz not null default now(),
   priority    text not null default 'Normal',
-  completed   boolean not null default false,
+  status      text not null default 'not_started', -- not_started | in_progress | completed
+  completed   boolean not null default false,      -- mirror of (status = 'completed')
   notes       text default '',
   created_at  timestamptz not null default now()
 );

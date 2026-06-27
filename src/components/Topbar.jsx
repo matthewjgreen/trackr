@@ -111,7 +111,7 @@ export default function Topbar({ showQuickAdd = false }) {
                           <Icon className="h-4 w-4" />
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className={`block truncate text-sm font-semibold ${a.completed ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-100'}`}>
+                          <span className={`block truncate text-sm font-semibold ${a.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-100'}`}>
                             {a.title}
                           </span>
                           <span className="block truncate text-xs text-slate-400">

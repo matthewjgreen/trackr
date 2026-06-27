@@ -138,7 +138,7 @@ export function NotificationsProvider({ children }) {
     const list = []
 
     for (const a of assignments) {
-      if (a.completed) continue
+      if (a.status === 'completed') continue
       const due = new Date(a.dueDate)
       const diffMs = due - now
       const diffHrs = diffMs / 3600000
