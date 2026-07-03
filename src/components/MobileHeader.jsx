@@ -11,7 +11,7 @@ export default function MobileHeader() {
         <Logo size={26} />
         <h1 className="text-lg font-extrabold leading-none text-brand-700 dark:text-brand-300">Trackr</h1>
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-3">
         <NotesPanel />
         <NotificationsBell />
         <AvatarMenu size={32} />
