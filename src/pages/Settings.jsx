@@ -16,7 +16,7 @@ export default function Settings() {
   return (
     <div className="mx-auto max-w-3xl px-5 py-6 md:px-8">
       <div className="mb-5">
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Settings</h2>
+        <h2 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Settings</h2>
         <p className="mt-1 text-sm text-slate-400">Manage your profile, courses, and preferences.</p>
       </div>
 

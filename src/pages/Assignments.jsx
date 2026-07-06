@@ -157,7 +157,7 @@ export default function Assignments() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-6 md:px-8">
       <div className="mb-5">
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Assignments</h2>
+        <h2 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Assignments</h2>
         <p className="mt-1 text-sm text-slate-400">
           {assignments.filter((a) => a.status === 'not_started').length} not started ·{' '}
           {assignments.filter((a) => a.status === 'in_progress').length} in progress ·{' '}

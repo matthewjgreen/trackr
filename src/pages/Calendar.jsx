@@ -107,7 +107,7 @@ export default function Calendar() {
     <div className="mx-auto max-w-6xl px-5 py-6 md:px-8">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Calendar</h2>
+          <h2 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Calendar</h2>
           <p className="mt-1 text-sm text-slate-400">{headerLabel}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">

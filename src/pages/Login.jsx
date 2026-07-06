@@ -51,7 +51,7 @@ export default function Login() {
       <div className="w-full max-w-sm">
         <div className="mb-6 flex items-center justify-center gap-2.5">
           <Logo size={34} />
-          <h1 className="text-2xl font-extrabold text-brand-700 dark:text-brand-300">Trackr</h1>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Trackr</h1>
         </div>
 
         <div className="rounded-2xl bg-white p-6 shadow-soft dark:bg-ink-card">

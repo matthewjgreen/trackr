@@ -128,7 +128,7 @@ export default function AddAssignment() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-6 md:px-8">
       <div className="mb-5">
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+        <h2 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
           {editing ? 'Edit Assignment' : 'Add New Assignment'}
         </h2>
         <p className="mt-1 text-sm text-slate-400">
