@@ -47,7 +47,7 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-50 via-slate-50 to-fuchsia-50 px-4 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 dark:bg-ink">
       <div className="w-full max-w-sm">
         <div className="mb-6 flex items-center justify-center gap-2.5">
           <Logo size={34} />
