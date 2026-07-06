@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
-import { accentFor } from '../lib/accents.js'
+import { typeAccent } from '../lib/accents.js'
 import ProgressRing from '../components/ProgressRing.jsx'
 import StatusSelect from '../components/StatusSelect.jsx'
 import ProblemProgress from '../components/ProblemProgress.jsx'
@@ -67,22 +67,22 @@ export default function Dashboard() {
             <ul className="space-y-3">
               {deadlines.map((a) => {
                 const course = courseById(courses, a.courseId)
-                const accent = accentFor(course?.color)
+                const tone = typeAccent(a.type)
                 const due = new Date(a.dueDate)
                 return (
                   <li
                     key={a.id}
                     className="relative rounded-2xl border border-slate-200 bg-white p-4 shadow-card dark:border-ink-border dark:bg-ink-card"
                   >
-                    <span className={`absolute inset-y-0 left-0 w-1.5 rounded-l-2xl ${accent.bar}`} />
+                    <span className={`absolute inset-y-0 left-0 w-1.5 rounded-l-2xl ${tone.bar}`} />
                     <div className="flex items-center gap-4 pl-2">
-                      <div className={`flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl ${accent.soft}`}>
+                      <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-200">
                         <span className="text-[10px] font-bold tracking-wide">{MONTHS3[due.getMonth()]}</span>
                         <span className="text-xl font-extrabold leading-none">{due.getDate()}</span>
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${accent.soft}`}>
+                          <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${tone.soft}`}>
                             {a.type}
                           </span>
                           <span className="flex items-center gap-1 text-xs text-slate-400">

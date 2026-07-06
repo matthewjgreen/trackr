@@ -140,7 +140,7 @@ export default function AddAssignment() {
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         {/* Main form card */}
-        <div className="rounded-2xl bg-white dark:bg-ink-card p-6 shadow-card lg:col-span-2">
+        <div className="rounded-2xl bg-white dark:bg-ink-card p-6 border border-slate-200 shadow-card dark:border-ink-border lg:col-span-2">
           <label className="block text-xs font-bold uppercase tracking-wide text-brand-600">
             Assignment Title
           </label>
@@ -252,7 +252,7 @@ export default function AddAssignment() {
 
         {/* Side column */}
         <div className="space-y-4">
-          <div className="rounded-2xl bg-white dark:bg-ink-card p-5 shadow-card">
+          <div className="rounded-2xl bg-white dark:bg-ink-card p-5 border border-slate-200 shadow-card dark:border-ink-border">
             <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">Urgency Status</p>
             <div className="mt-3 grid grid-cols-2 gap-2">
               <button
@@ -280,7 +280,7 @@ export default function AddAssignment() {
             </div>
           </div>
 
-          <div className="rounded-2xl bg-white dark:bg-ink-card p-5 shadow-card">
+          <div className="rounded-2xl bg-white dark:bg-ink-card p-5 border border-slate-200 shadow-card dark:border-ink-border">
             <p className="text-sm font-semibold text-brand-600">Productivity Tip</p>
             <p className="mt-2 text-sm italic text-slate-500">
               "The secret of getting ahead is getting started." — Mark Twain
@@ -315,7 +315,7 @@ export default function AddAssignment() {
       </div>
 
       {/* Notes & resources */}
-      <div className="mt-5 rounded-2xl bg-white dark:bg-ink-card p-5 shadow-card">
+      <div className="mt-5 rounded-2xl bg-white dark:bg-ink-card p-5 border border-slate-200 shadow-card dark:border-ink-border">
         <p className="mb-2 text-sm font-semibold text-slate-600 dark:text-slate-300">
           Additional Notes &amp; Resources (Optional)
         </p>

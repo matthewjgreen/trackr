@@ -36,7 +36,7 @@ export default function Settings() {
 
 function Card({ icon: Icon, title, subtitle, children }) {
   return (
-    <section className="rounded-2xl bg-white p-6 shadow-card dark:bg-ink-card">
+    <section className="rounded-2xl bg-white p-6 border border-slate-200 shadow-card dark:border-ink-border dark:bg-ink-card">
       <div className="mb-4 flex items-center gap-3">
         {Icon && (
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-slate-700 dark:text-brand-300">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
-import { accentFor } from '../lib/accents.js'
+import { accentFor, typeAccent } from '../lib/accents.js'
 import { dueMeta, bucketFor, DUE_BUCKETS } from '../lib/due.js'
 import StatusSelect from '../components/StatusSelect.jsx'
 import EmptyState from '../components/EmptyState.jsx'
@@ -67,14 +67,15 @@ export default function Assignments() {
     const Icon = typeIcon[a.type] ?? typeIcon.Homework
     const course = courseById(courses, a.courseId)
     const accent = accentFor(course?.color)
+    const tone = typeAccent(a.type)
     const done = a.status === 'completed'
     const dm = dueMeta(a.dueDate)
     return (
       <li
         key={a.id}
-        className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card dark:bg-ink-card md:gap-4"
+        className="flex items-center gap-3 rounded-2xl bg-white p-4 border border-slate-200 shadow-card dark:border-ink-border dark:bg-ink-card md:gap-4"
       >
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${accent.soft}`}>
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tone.soft}`}>
           <Icon className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
@@ -82,12 +83,14 @@ export default function Assignments() {
             {a.title}
           </p>
           <div className="mt-1 flex flex-wrap items-center gap-1.5">
+            <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${tone.soft}`}>
+              {a.type}
+            </span>
             {course && (
               <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${accent.soft}`}>
                 {course.name}
               </span>
             )}
-            <span className="text-xs text-slate-400">{a.type}</span>
             {!done && (
               <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${dm.tone}`}>
                 {dm.label}

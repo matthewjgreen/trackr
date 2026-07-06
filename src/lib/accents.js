@@ -1,17 +1,85 @@
-// Maps a course color name to the Tailwind classes used across the app.
-// Courses store their color in the database; UI components look it up here so
-// the palette stays consistent on the Dashboard, Calendar, and Assignments.
+// Color tokens used across the app. Class strings are written out in full (no
+// interpolation) so Tailwind's JIT keeps them in the build. `soft`/`pill` carry
+// dark-mode variants so colored chips read well on the deep-navy surfaces.
 
 export const COLOR_ACCENTS = {
-  emerald: { bar: 'bg-emerald-400', dot: 'bg-emerald-400', chipBg: 'bg-emerald-50', chipText: 'text-emerald-600', pill: 'bg-emerald-50 text-emerald-700', soft: 'bg-emerald-50 text-emerald-600' },
-  rose: { bar: 'bg-rose-400', dot: 'bg-rose-400', chipBg: 'bg-rose-50', chipText: 'text-rose-600', pill: 'bg-rose-50 text-rose-700', soft: 'bg-rose-50 text-rose-600' },
-  amber: { bar: 'bg-amber-400', dot: 'bg-amber-400', chipBg: 'bg-amber-50', chipText: 'text-amber-600', pill: 'bg-amber-50 text-amber-700', soft: 'bg-amber-50 text-amber-600' },
-  sky: { bar: 'bg-sky-400', dot: 'bg-sky-400', chipBg: 'bg-sky-50', chipText: 'text-sky-600', pill: 'bg-sky-50 text-sky-700', soft: 'bg-sky-50 text-sky-600' },
-  violet: { bar: 'bg-violet-400', dot: 'bg-violet-400', chipBg: 'bg-violet-50', chipText: 'text-violet-600', pill: 'bg-violet-50 text-violet-700', soft: 'bg-violet-50 text-violet-600' },
+  blue: {
+    bar: 'bg-brand-500',
+    dot: 'bg-brand-500',
+    chipBg: 'bg-brand-50 dark:bg-brand-500/15',
+    chipText: 'text-brand-600 dark:text-brand-300',
+    pill: 'bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300',
+    soft: 'bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300',
+  },
+  emerald: {
+    bar: 'bg-emerald-500',
+    dot: 'bg-emerald-500',
+    chipBg: 'bg-emerald-50 dark:bg-emerald-500/15',
+    chipText: 'text-emerald-600 dark:text-emerald-300',
+    pill: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300',
+    soft: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300',
+  },
+  amber: {
+    bar: 'bg-amber-500',
+    dot: 'bg-amber-500',
+    chipBg: 'bg-amber-50 dark:bg-amber-500/15',
+    chipText: 'text-amber-600 dark:text-amber-300',
+    pill: 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
+    soft: 'bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300',
+  },
+  rose: {
+    bar: 'bg-rose-500',
+    dot: 'bg-rose-500',
+    chipBg: 'bg-rose-50 dark:bg-rose-500/15',
+    chipText: 'text-rose-600 dark:text-rose-300',
+    pill: 'bg-rose-50 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300',
+    soft: 'bg-rose-50 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300',
+  },
+  violet: {
+    bar: 'bg-violet-500',
+    dot: 'bg-violet-500',
+    chipBg: 'bg-violet-50 dark:bg-violet-500/15',
+    chipText: 'text-violet-600 dark:text-violet-300',
+    pill: 'bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
+    soft: 'bg-violet-50 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300',
+  },
+  sky: {
+    bar: 'bg-sky-500',
+    dot: 'bg-sky-500',
+    chipBg: 'bg-sky-50 dark:bg-sky-500/15',
+    chipText: 'text-sky-600 dark:text-sky-300',
+    pill: 'bg-sky-50 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300',
+    soft: 'bg-sky-50 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300',
+  },
+  slate: {
+    bar: 'bg-slate-400',
+    dot: 'bg-slate-400',
+    chipBg: 'bg-slate-100 dark:bg-slate-500/20',
+    chipText: 'text-slate-600 dark:text-slate-300',
+    pill: 'bg-slate-100 text-slate-600 dark:bg-slate-500/20 dark:text-slate-300',
+    soft: 'bg-slate-100 text-slate-600 dark:bg-slate-500/20 dark:text-slate-300',
+  },
 }
 
-export const COLOR_OPTIONS = Object.keys(COLOR_ACCENTS)
+// Course color choices offered in Settings.
+export const COLOR_OPTIONS = ['blue', 'emerald', 'amber', 'rose', 'violet', 'sky']
 
 export function accentFor(color) {
-  return COLOR_ACCENTS[color] ?? COLOR_ACCENTS.emerald
+  return COLOR_ACCENTS[color] ?? COLOR_ACCENTS.blue
+}
+
+// Assignment type → accent color, matching the redesign mockup
+// (Project = blue, Quiz = amber, Reading/Paper = violet, …).
+export const TYPE_COLORS = {
+  Project: 'blue',
+  Quiz: 'amber',
+  Test: 'rose',
+  Homework: 'emerald',
+  Paper: 'violet',
+  Application: 'sky',
+  Other: 'slate',
+}
+
+export function typeAccent(type) {
+  return accentFor(TYPE_COLORS[type] ?? 'slate')
 }

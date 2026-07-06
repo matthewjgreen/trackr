@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAssignments, formatDueLabel, courseById } from '../context/AssignmentsContext.jsx'
-import { accentFor } from '../lib/accents.js'
+import { useAssignments, formatDueLabel } from '../context/AssignmentsContext.jsx'
+import { typeAccent } from '../lib/accents.js'
 import { statusMeta } from '../lib/status.js'
 import EmptyState from '../components/EmptyState.jsx'
 import ProblemProgress from '../components/ProblemProgress.jsx'
@@ -19,7 +19,7 @@ const sameDay = (a, b) =>
   a.getDate() === b.getDate()
 
 export default function Calendar() {
-  const { assignments, courses } = useAssignments()
+  const { assignments } = useAssignments()
   const navigate = useNavigate()
   const today = new Date()
 
@@ -145,7 +145,7 @@ export default function Calendar() {
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         {/* Month grid */}
-        <div className="rounded-2xl bg-white dark:bg-ink-card p-4 shadow-card lg:col-span-2">
+        <div className="rounded-2xl bg-white dark:bg-ink-card p-4 border border-slate-200 shadow-card dark:border-ink-border lg:col-span-2">
           <div className="grid grid-cols-7 gap-1">
             {WEEKDAYS.map((d) => (
               <div
@@ -181,7 +181,7 @@ export default function Calendar() {
                   </span>
                   <div className="space-y-0.5">
                     {items.slice(0, max).map((a) => {
-                      const accent = accentFor(courseById(courses, a.courseId)?.color)
+                      const accent = typeAccent(a.type)
                       return (
                         <div
                           key={a.id}
@@ -207,7 +207,7 @@ export default function Calendar() {
         </div>
 
         {/* Selected-day detail */}
-        <div className="rounded-2xl bg-white dark:bg-ink-card p-5 shadow-card">
+        <div className="rounded-2xl bg-white dark:bg-ink-card p-5 border border-slate-200 shadow-card dark:border-ink-border">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
             {selected.toLocaleDateString([], { weekday: 'long' })}
           </p>
@@ -222,7 +222,7 @@ export default function Calendar() {
           <ul className="mt-4 space-y-3">
             {selectedItems.map((a) => {
               const Icon = typeIcon[a.type] ?? typeIcon.Homework
-              const accent = accentFor(courseById(courses, a.courseId)?.color)
+              const accent = typeAccent(a.type)
               return (
                 <li
                   key={a.id}
