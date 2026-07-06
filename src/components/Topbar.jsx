@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAssignments, courseById, formatDueLabel } from '../context/AssignmentsContext.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 import AvatarMenu from './AvatarMenu.jsx'
 import NotificationsBell from './NotificationsBell.jsx'
 import NotesPanel from './NotesPanel.jsx'
@@ -11,6 +12,11 @@ import { SearchIcon, typeIcon } from './Icons.jsx'
 export default function Topbar() {
   const navigate = useNavigate()
   const { assignments, courses } = useAssignments()
+  const { profile } = useAuth()
+  const displayName =
+    [profile.firstName, profile.lastName].filter(Boolean).join(' ') ||
+    profile.email?.split('@')[0] ||
+    'Your account'
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [highlight, setHighlight] = useState(0)
@@ -72,7 +78,7 @@ export default function Topbar() {
   }
 
   return (
-    <header className="hidden md:flex items-center gap-4 border-b border-slate-200/70 bg-white/80 px-8 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-800/80">
+    <header className="hidden md:flex items-center gap-4 border-b border-slate-200/70 bg-white/80 px-8 py-3 backdrop-blur dark:border-ink-border dark:bg-ink-card/80">
       <div ref={boxRef} className="relative flex-1 max-w-xl">
         <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <input
@@ -89,7 +95,7 @@ export default function Topbar() {
         />
 
         {open && term && (
-          <div className="absolute z-40 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-soft dark:border-slate-700 dark:bg-slate-800">
+          <div className="absolute z-40 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-soft dark:border-ink-border dark:bg-ink-card">
             {results.length === 0 ? (
               <p className="px-4 py-6 text-center text-sm text-slate-400">
                 No matches for "{query.trim()}"
@@ -122,7 +128,7 @@ export default function Topbar() {
                     </li>
                   )
                 })}
-                <li className="border-t border-slate-100 dark:border-slate-700">
+                <li className="border-t border-slate-100 dark:border-ink-border">
                   <button
                     onClick={goToResults}
                     className="w-full px-4 py-2.5 text-left text-xs font-semibold text-brand-600 hover:bg-slate-50 dark:text-brand-300 dark:hover:bg-slate-700/60"
@@ -139,6 +145,14 @@ export default function Topbar() {
       <div className="ml-auto flex items-center gap-4 sm:gap-5">
         <NotesPanel />
         <NotificationsBell />
+        <div className="hidden max-w-[12rem] text-right lg:block">
+          <p className="truncate text-sm font-semibold leading-tight text-slate-800 dark:text-slate-100">
+            {displayName}
+          </p>
+          {profile.email && (
+            <p className="truncate text-[11px] text-slate-400">{profile.email}</p>
+          )}
+        </div>
         <AvatarMenu size={36} />
       </div>
     </header>

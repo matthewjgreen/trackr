@@ -98,6 +98,7 @@ export function AssignmentsProvider({ children }) {
     else {
       setCourses([])
       setAssignments([])
+      setLoading(false)
     }
   }, [user, loadData])
 

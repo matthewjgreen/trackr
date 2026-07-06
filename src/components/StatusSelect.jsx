@@ -32,7 +32,7 @@ export default function StatusSelect({ value, onChange }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-30 mt-1 w-40 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-soft dark:border-slate-700 dark:bg-slate-800">
+        <div className="absolute right-0 z-30 mt-1 w-40 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-soft dark:border-ink-border dark:bg-ink-card">
           {STATUSES.map((s) => (
             <button
               key={s.value}

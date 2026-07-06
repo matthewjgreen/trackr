@@ -15,7 +15,7 @@ export default function Modal({ open, onClose, title, children }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-soft dark:bg-slate-800">
+      <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-soft dark:bg-ink-card">
         {title && (
           <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">{title}</h3>
         )}

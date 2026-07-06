@@ -23,7 +23,7 @@ export default function CropModal({ imageSrc, open, busy, onCancel, onSave }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={busy ? undefined : onCancel} />
-      <div className="relative w-full max-w-md rounded-2xl bg-white p-5 shadow-soft dark:bg-slate-800">
+      <div className="relative w-full max-w-md rounded-2xl bg-white p-5 shadow-soft dark:bg-ink-card">
         <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Crop your photo</h3>
         <p className="mt-1 text-xs text-slate-400">Drag to reposition, and use the slider to zoom.</p>
 

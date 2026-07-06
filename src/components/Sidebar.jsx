@@ -22,10 +22,10 @@ export default function Sidebar() {
 
   return (
     <>
-    <aside className="hidden md:flex md:w-60 lg:w-64 shrink-0 flex-col border-r border-slate-200/70 bg-white px-4 py-6 dark:border-slate-700 dark:bg-slate-800">
-      <div className="px-3 mb-8 flex items-center gap-2">
-        <Logo size={28} />
-        <h1 className="text-xl font-extrabold text-brand-700 dark:text-brand-300">Trackr</h1>
+    <aside className="hidden md:flex md:w-60 lg:w-64 shrink-0 flex-col border-r border-slate-200/70 bg-white px-4 py-6 dark:border-ink-border dark:bg-ink-card">
+      <div className="mb-9 flex items-center gap-2.5 px-2">
+        <Logo size={32} />
+        <h1 className="font-display text-xl font-bold tracking-tight text-slate-900 dark:text-white">Trackr</h1>
       </div>
 
       <nav className="flex-1 space-y-1">
@@ -35,10 +35,10 @@ export default function Sidebar() {
             to={to}
             end={end}
             className={({ isActive }) =>
-              `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+              `relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
                 isActive
-                  ? 'bg-brand-50 text-brand-700 dark:bg-slate-700 dark:text-brand-200'
-                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100'
+                  ? 'bg-brand-50 text-brand-600 after:absolute after:right-0 after:top-1/2 after:h-6 after:w-1 after:-translate-y-1/2 after:rounded-full after:bg-brand-600 dark:bg-brand-500/10 dark:text-brand-300'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-100'
               }`
             }
           >
@@ -56,7 +56,7 @@ export default function Sidebar() {
         Add Assignment
       </button>
 
-      <div className="mt-6 space-y-1 border-t border-slate-100 pt-4 dark:border-slate-700">
+      <div className="mt-6 space-y-1 border-t border-slate-100 pt-4 dark:border-ink-border">
         <button
           onClick={() => setShowHelp(true)}
           className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-700"

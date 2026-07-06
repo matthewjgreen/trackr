@@ -145,7 +145,7 @@ export default function Calendar() {
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         {/* Month grid */}
-        <div className="rounded-2xl bg-white dark:bg-slate-800 p-4 shadow-card lg:col-span-2">
+        <div className="rounded-2xl bg-white dark:bg-ink-card p-4 shadow-card lg:col-span-2">
           <div className="grid grid-cols-7 gap-1">
             {WEEKDAYS.map((d) => (
               <div
@@ -207,7 +207,7 @@ export default function Calendar() {
         </div>
 
         {/* Selected-day detail */}
-        <div className="rounded-2xl bg-white dark:bg-slate-800 p-5 shadow-card">
+        <div className="rounded-2xl bg-white dark:bg-ink-card p-5 shadow-card">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
             {selected.toLocaleDateString([], { weekday: 'long' })}
           </p>
@@ -226,7 +226,7 @@ export default function Calendar() {
               return (
                 <li
                   key={a.id}
-                  className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-3 dark:border-slate-700 dark:bg-slate-700/40"
+                  className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-3 dark:border-ink-border dark:bg-slate-700/40"
                 >
                   <span className={`h-8 w-1 rounded-full ${accent.dot}`} />
                   <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${accent.pill}`}>

@@ -30,7 +30,7 @@ export default function AvatarMenu({ size = 36 }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-soft dark:border-slate-700 dark:bg-slate-800">
+        <div className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-soft dark:border-ink-border dark:bg-ink-card">
           <button
             onClick={() => {
               setOpen(false)

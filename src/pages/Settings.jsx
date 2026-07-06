@@ -36,7 +36,7 @@ export default function Settings() {
 
 function Card({ icon: Icon, title, subtitle, children }) {
   return (
-    <section className="rounded-2xl bg-white p-6 shadow-card dark:bg-slate-800">
+    <section className="rounded-2xl bg-white p-6 shadow-card dark:bg-ink-card">
       <div className="mb-4 flex items-center gap-3">
         {Icon && (
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-slate-700 dark:text-brand-300">
@@ -367,7 +367,7 @@ function NotificationsSection() {
       />
 
       {prefs.enabled && (
-        <div className="mt-4 space-y-5 border-t border-slate-100 pt-4 dark:border-slate-700">
+        <div className="mt-4 space-y-5 border-t border-slate-100 pt-4 dark:border-ink-border">
           {isIOS && !isStandalone && (
             <p className="rounded-lg bg-brand-50 px-3 py-2.5 text-xs leading-relaxed text-brand-700 dark:bg-brand-500/10 dark:text-brand-200">
               📱 <b>On iPhone/iPad:</b> to get lockscreen reminders, tap the Safari <b>Share</b> button →{' '}
@@ -402,7 +402,7 @@ function NotificationsSection() {
               )}
 
               {pushSupported && (
-                <div className="mt-4 border-t border-slate-100 pt-4 dark:border-slate-700">
+                <div className="mt-4 border-t border-slate-100 pt-4 dark:border-ink-border">
                   <Toggle
                     label="Remind me when the app is closed"
                     description="Delivers reminders to this device even when Trackr isn't open. Requires the push server to be running."
@@ -484,7 +484,7 @@ function CoursesSection() {
     <Card icon={BookIcon} title="Courses" subtitle="Add, rename, recolor, or remove your courses">
       <ul className="space-y-2">
         {courses.map((c) => (
-          <li key={c.id} className="flex items-center gap-2 rounded-xl border border-slate-100 p-2 dark:border-slate-700">
+          <li key={c.id} className="flex items-center gap-2 rounded-xl border border-slate-100 p-2 dark:border-ink-border">
             <ColorPicker value={c.color} onChange={(color) => updateCourse(c.id, { color })} />
             <input
               defaultValue={c.name}
@@ -504,13 +504,13 @@ function CoursesSection() {
           </li>
         ))}
         {courses.length === 0 && (
-          <li className="rounded-xl border border-dashed border-slate-200 p-4 text-center text-xs text-slate-400 dark:border-slate-700">
+          <li className="rounded-xl border border-dashed border-slate-200 p-4 text-center text-xs text-slate-400 dark:border-ink-border">
             No courses yet — add your first one below.
           </li>
         )}
       </ul>
 
-      <form onSubmit={add} className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-4 dark:border-slate-700">
+      <form onSubmit={add} className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-4 dark:border-ink-border">
         <ColorPicker value={newColor} onChange={setNewColor} />
         <input
           value={newName}

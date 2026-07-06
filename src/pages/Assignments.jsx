@@ -72,7 +72,7 @@ export default function Assignments() {
     return (
       <li
         key={a.id}
-        className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card dark:bg-slate-800 md:gap-4"
+        className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card dark:bg-ink-card md:gap-4"
       >
         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${accent.soft}`}>
           <Icon className="h-5 w-5" />
@@ -172,7 +172,7 @@ export default function Assignments() {
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder="Search assignments…"
-          className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-9 text-sm text-slate-700 outline-none transition focus:border-brand-300 focus:ring-2 focus:ring-brand-100 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+          className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-9 text-sm text-slate-700 outline-none transition focus:border-brand-300 focus:ring-2 focus:ring-brand-100 dark:border-slate-600 dark:bg-ink-card dark:text-slate-100"
         />
         {query && (
           <button
@@ -193,7 +193,7 @@ export default function Assignments() {
             className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
               filter === f.key
                 ? 'bg-brand-600 text-white'
-                : 'bg-white text-slate-500 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
+                : 'bg-white text-slate-500 hover:bg-slate-100 dark:bg-ink-card dark:text-slate-300 dark:hover:bg-slate-700'
             }`}
           >
             {f.label}
@@ -204,7 +204,7 @@ export default function Assignments() {
       {loading ? (
         <SkeletonRows count={5} />
       ) : grouped.length === 0 ? (
-        <EmptyState icon={ListIcon} className="bg-white py-12 dark:bg-slate-800">
+        <EmptyState icon={ListIcon} className="bg-white py-12 dark:bg-ink-card">
           {term ? `No assignments match "${query.trim()}".` : 'No assignments yet — add your first one.'}
         </EmptyState>
       ) : (

@@ -5,7 +5,7 @@ export function SkeletonRows({ count = 4 }) {
       {Array.from({ length: count }).map((_, i) => (
         <li
           key={i}
-          className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card dark:bg-slate-800"
+          className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card dark:bg-ink-card"
         >
           <div className="h-10 w-10 shrink-0 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-700" />
           <div className="flex-1 space-y-2">

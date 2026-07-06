@@ -54,7 +54,7 @@ export default function Login() {
           <h1 className="text-2xl font-extrabold text-brand-700 dark:text-brand-300">Trackr</h1>
         </div>
 
-        <div className="rounded-2xl bg-white p-6 shadow-soft dark:bg-slate-800">
+        <div className="rounded-2xl bg-white p-6 shadow-soft dark:bg-ink-card">
           <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">
             {mode === 'signin' ? 'Welcome back' : 'Create your account'}
           </h2>
