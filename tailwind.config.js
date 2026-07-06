@@ -29,11 +29,11 @@ export default {
           500: '#10b981',
           600: '#059669',
         },
-        // Deep-navy surfaces for dark mode.
+        // Neutral dark-gray surfaces for dark mode.
         ink: {
-          DEFAULT: '#0a0e19',
-          card: '#141a2b',
-          border: '#232a3d',
+          DEFAULT: '#0f0f10',
+          card: '#1a1a1c',
+          border: '#2c2c30',
         },
       },
       boxShadow: {
