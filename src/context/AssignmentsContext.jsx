@@ -22,6 +22,8 @@ function assignmentFromRow(r) {
     priority: r.priority,
     status,
     completed: status === 'completed',
+    totalProblems: r.total_problems ?? 0,
+    completedProblems: r.completed_problems ?? 0,
     notes: r.notes ?? '',
   }
 }
@@ -37,6 +39,8 @@ function assignmentToRow(data) {
     priority: data.priority,
     status,
     completed: status === 'completed', // keep the legacy mirror in sync
+    total_problems: Math.max(0, data.totalProblems ?? 0),
+    completed_problems: Math.max(0, Math.min(data.completedProblems ?? 0, data.totalProblems ?? 0)),
     notes: data.notes ?? '',
   }
 }

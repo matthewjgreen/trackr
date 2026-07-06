@@ -26,6 +26,8 @@ create table public.assignments (
   priority    text not null default 'Normal',
   status      text not null default 'not_started', -- not_started | in_progress | completed
   completed   boolean not null default false,      -- mirror of (status = 'completed')
+  total_problems     int not null default 0,
+  completed_problems int not null default 0,
   notes       text default '',
   created_at  timestamptz not null default now()
 );

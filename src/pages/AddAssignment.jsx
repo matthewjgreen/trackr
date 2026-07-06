@@ -15,6 +15,8 @@ const emptyForm = {
   customType: '',
   priority: 'Normal',
   status: DEFAULT_STATUS,
+  totalProblems: '',
+  completedProblems: 0,
   notes: '',
 }
 
@@ -37,6 +39,8 @@ function fromAssignment(a) {
     customType: known ? '' : a.type,
     priority: a.priority ?? 'Normal',
     status: a.status ?? DEFAULT_STATUS,
+    totalProblems: a.totalProblems ? String(a.totalProblems) : '',
+    completedProblems: a.completedProblems ?? 0,
     notes: a.notes ?? '',
   }
 }
@@ -67,6 +71,8 @@ export default function AddAssignment() {
 
   function buildPayload() {
     const course = courses.find((c) => c.id === form.courseId)
+    const total = Math.max(0, parseInt(form.totalProblems, 10) || 0)
+    const completed = Math.min(Math.max(0, parseInt(form.completedProblems, 10) || 0), total)
     return {
       title: form.title.trim(),
       courseId: form.courseId,
@@ -75,6 +81,8 @@ export default function AddAssignment() {
       dueDate: form.dueDate ? new Date(form.dueDate).toISOString() : new Date().toISOString(),
       priority: form.priority,
       status: form.status,
+      totalProblems: total,
+      completedProblems: completed,
       notes: form.notes.trim(),
     }
   }
@@ -222,6 +230,23 @@ export default function AddAssignment() {
                 )
               })}
             </div>
+          </div>
+
+          <div className="mt-5">
+            <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300">
+              Number of problems <span className="font-normal text-slate-400">(optional)</span>
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={form.totalProblems}
+              onChange={(e) => set('totalProblems', e.target.value)}
+              placeholder="e.g. 20"
+              className="mt-2 w-40 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition focus:border-brand-300 focus:bg-white focus:ring-2 focus:ring-brand-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:focus:bg-slate-700"
+            />
+            <p className="mt-1.5 text-xs text-slate-400">
+              Then track how many you've finished from the Assignments list.
+            </p>
           </div>
         </div>
 

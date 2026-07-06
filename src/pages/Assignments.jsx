@@ -16,8 +16,12 @@ const FILTERS = [
 ]
 
 export default function Assignments() {
-  const { assignments, courses, setStatus, removeAssignment, loading } = useAssignments()
+  const { assignments, courses, setStatus, updateAssignment, removeAssignment, loading } = useAssignments()
   const navigate = useNavigate()
+
+  function setProblems(a, n) {
+    updateAssignment(a.id, { completedProblems: Math.max(0, Math.min(a.totalProblems, n)) })
+  }
   const [searchParams, setSearchParams] = useSearchParams()
   const [filter, setFilter] = useState('all')
   const [query, setQuery] = useState(searchParams.get('q') ?? '')
@@ -86,6 +90,41 @@ export default function Assignments() {
               </span>
             )}
           </div>
+
+          {a.totalProblems > 0 && (
+            <div className="mt-2 flex items-center gap-2">
+              <div className="flex items-center rounded-lg border border-slate-200 dark:border-slate-600">
+                <button
+                  onClick={() => setProblems(a, a.completedProblems - 1)}
+                  disabled={a.completedProblems <= 0}
+                  className="px-2 py-0.5 text-sm font-bold text-slate-500 transition hover:text-brand-600 disabled:opacity-30 dark:text-slate-300"
+                  title="One fewer done"
+                >
+                  −
+                </button>
+                <span className="min-w-[3rem] text-center text-xs font-semibold tabular-nums text-slate-600 dark:text-slate-300">
+                  {a.completedProblems}/{a.totalProblems}
+                </span>
+                <button
+                  onClick={() => setProblems(a, a.completedProblems + 1)}
+                  disabled={a.completedProblems >= a.totalProblems}
+                  className="px-2 py-0.5 text-sm font-bold text-slate-500 transition hover:text-brand-600 disabled:opacity-30 dark:text-slate-300"
+                  title="One more done"
+                >
+                  +
+                </button>
+              </div>
+              <div className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+                <div
+                  className="h-full rounded-full bg-brand-500 transition-all"
+                  style={{ width: `${Math.round((a.completedProblems / a.totalProblems) * 100)}%` }}
+                />
+              </div>
+              <span className="text-[10px] font-semibold text-slate-400">
+                {Math.round((a.completedProblems / a.totalProblems) * 100)}%
+              </span>
+            </div>
+          )}
         </div>
         {a.priority === 'Critical' && !done && (
           <span className="hidden shrink-0 rounded-md bg-rose-50 px-2 py-1 text-[11px] font-bold text-rose-500 sm:inline dark:bg-rose-500/10 dark:text-rose-400">
