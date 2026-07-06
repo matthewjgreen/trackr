@@ -4,6 +4,7 @@ import { useAssignments, formatDueLabel, courseById } from '../context/Assignmen
 import { accentFor } from '../lib/accents.js'
 import { statusMeta } from '../lib/status.js'
 import EmptyState from '../components/EmptyState.jsx'
+import ProblemProgress from '../components/ProblemProgress.jsx'
 import { typeIcon, CalendarIcon, EditIcon } from '../components/Icons.jsx'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -236,6 +237,7 @@ export default function Calendar() {
                       {a.title}
                     </p>
                     <p className="truncate text-xs text-slate-400">{formatDueLabel(a.dueDate)}</p>
+                    <ProblemProgress done={a.completedProblems} total={a.totalProblems} className="mt-1.5" />
                   </div>
                   <span className={`shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold ${statusMeta(a.status).pill}`}>
                     {statusMeta(a.status).label}

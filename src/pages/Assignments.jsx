@@ -20,7 +20,11 @@ export default function Assignments() {
   const navigate = useNavigate()
 
   function setProblems(a, n) {
-    updateAssignment(a.id, { completedProblems: Math.max(0, Math.min(a.totalProblems, n)) })
+    const done = Math.max(0, Math.min(a.totalProblems, n))
+    // Keep status in sync with problem progress: all done → completed,
+    // some done → in progress, none → not started.
+    const status = done >= a.totalProblems ? 'completed' : done > 0 ? 'in_progress' : 'not_started'
+    updateAssignment(a.id, { completedProblems: done, status })
   }
   const [searchParams, setSearchParams] = useSearchParams()
   const [filter, setFilter] = useState('all')

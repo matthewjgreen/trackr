@@ -3,6 +3,7 @@ import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
 import { accentFor } from '../lib/accents.js'
 import ProgressRing from '../components/ProgressRing.jsx'
 import StatusSelect from '../components/StatusSelect.jsx'
+import ProblemProgress from '../components/ProblemProgress.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import { SkeletonRows } from '../components/Skeleton.jsx'
 import { ClockIcon, TrendIcon, EditIcon } from '../components/Icons.jsx'
@@ -61,6 +62,7 @@ export default function Dashboard() {
                       {due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
                     </p>
                     <p className="truncate text-sm font-semibold text-slate-700 dark:text-slate-100">{a.title}</p>
+                    <ProblemProgress done={a.completedProblems} total={a.totalProblems} className="mt-1.5" />
                   </div>
                   <StatusSelect value={a.status} onChange={(s) => setStatus(a.id, s)} />
                   <button
