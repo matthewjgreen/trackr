@@ -3,21 +3,39 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useAssignments } from '../context/AssignmentsContext.jsx'
 import { useToast } from '../context/ToastContext.jsx'
 import { STATUSES, DEFAULT_STATUS } from '../lib/status.js'
+import { typeAccent } from '../lib/accents.js'
 import { typeIcon, PaperclipIcon, LinkIcon } from '../components/Icons.jsx'
 
 const TYPES = ['Test', 'Quiz', 'Homework', 'Project', 'Paper', 'Application', 'Other']
 
-const emptyForm = {
-  title: '',
-  courseId: '',
-  dueDate: '',
-  type: 'Test',
-  customType: '',
-  priority: 'Normal',
-  status: DEFAULT_STATUS,
-  totalProblems: '',
-  completedProblems: 0,
-  notes: '',
+// The default due time for a new assignment: 11:59 PM today (local).
+function defaultDueLocal() {
+  const d = new Date()
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T23:59`
+}
+
+function makeEmptyForm() {
+  return {
+    title: '',
+    courseId: '',
+    dueDate: defaultDueLocal(),
+    type: 'Test',
+    customType: '',
+    priority: 'Normal',
+    status: DEFAULT_STATUS,
+    totalProblems: '',
+    completedProblems: 0,
+    notes: '',
+  }
+}
+
+// "HH:mm" (24h) → a friendly "9:00 AM" label.
+function formatTime(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number)
+  const period = h >= 12 ? 'PM' : 'AM'
+  const h12 = h % 12 === 0 ? 12 : h % 12
+  return `${h12}:${String(m).padStart(2, '0')} ${period}`
 }
 
 // ISO → the local "YYYY-MM-DDTHH:mm" string a datetime-local input expects.
@@ -54,7 +72,7 @@ export default function AddAssignment() {
   const editing = Boolean(id)
   const existing = editing ? assignments.find((a) => a.id === id) : null
 
-  const [form, setForm] = useState(existing ? fromAssignment(existing) : emptyForm)
+  const [form, setForm] = useState(existing ? fromAssignment(existing) : makeEmptyForm())
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -67,6 +85,14 @@ export default function AddAssignment() {
 
   function set(field, value) {
     setForm((f) => ({ ...f, [field]: value }))
+  }
+
+  const selectedCourse = courses.find((c) => c.id === form.courseId)
+
+  // Replace just the time portion of the due date, keeping the chosen day.
+  function setDueTime(hhmm) {
+    const datePart = (form.dueDate || defaultDueLocal()).slice(0, 10)
+    set('dueDate', `${datePart}T${hhmm}`)
   }
 
   function buildPayload() {
@@ -118,7 +144,7 @@ export default function AddAssignment() {
       return
     }
     if (addAnother) {
-      setForm(emptyForm)
+      setForm(makeEmptyForm())
       setError('')
     } else {
       navigate('/')
@@ -173,6 +199,24 @@ export default function AddAssignment() {
                 onChange={(e) => set('dueDate', e.target.value)}
                 className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-brand-300 focus:ring-2 focus:ring-brand-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
               />
+              <div className="mt-2 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDueTime('23:59')}
+                  className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-500 transition hover:border-brand-300 hover:text-brand-600 dark:border-slate-600 dark:text-slate-300 dark:hover:border-brand-500"
+                >
+                  11:59 PM
+                </button>
+                {selectedCourse?.startTime && (
+                  <button
+                    type="button"
+                    onClick={() => setDueTime(selectedCourse.startTime)}
+                    className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-500 transition hover:border-brand-300 hover:text-brand-600 dark:border-slate-600 dark:text-slate-300 dark:hover:border-brand-500"
+                  >
+                    Class time · {formatTime(selectedCourse.startTime)}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -189,7 +233,7 @@ export default function AddAssignment() {
                     onClick={() => set('type', t)}
                     className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition ${
                       selected
-                        ? 'border-brand-600 bg-brand-600 text-white shadow-soft'
+                        ? `${typeAccent(t).solid} shadow-soft`
                         : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300'
                     }`}
                   >

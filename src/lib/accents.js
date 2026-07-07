@@ -10,6 +10,7 @@ export const COLOR_ACCENTS = {
     chipText: 'text-brand-600 dark:text-brand-300',
     pill: 'bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300',
     soft: 'bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300',
+    solid: 'border-brand-600 bg-brand-600 text-white',
   },
   emerald: {
     bar: 'bg-emerald-500',
@@ -18,6 +19,7 @@ export const COLOR_ACCENTS = {
     chipText: 'text-emerald-600 dark:text-emerald-300',
     pill: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300',
     soft: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300',
+    solid: 'border-emerald-500 bg-emerald-500 text-white',
   },
   amber: {
     bar: 'bg-amber-500',
@@ -26,6 +28,7 @@ export const COLOR_ACCENTS = {
     chipText: 'text-amber-600 dark:text-amber-300',
     pill: 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
     soft: 'bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300',
+    solid: 'border-amber-500 bg-amber-500 text-white',
   },
   rose: {
     bar: 'bg-rose-500',
@@ -34,6 +37,7 @@ export const COLOR_ACCENTS = {
     chipText: 'text-rose-600 dark:text-rose-300',
     pill: 'bg-rose-50 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300',
     soft: 'bg-rose-50 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300',
+    solid: 'border-rose-500 bg-rose-500 text-white',
   },
   violet: {
     bar: 'bg-violet-500',
@@ -42,6 +46,7 @@ export const COLOR_ACCENTS = {
     chipText: 'text-violet-600 dark:text-violet-300',
     pill: 'bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
     soft: 'bg-violet-50 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300',
+    solid: 'border-violet-500 bg-violet-500 text-white',
   },
   sky: {
     bar: 'bg-sky-500',
@@ -50,6 +55,7 @@ export const COLOR_ACCENTS = {
     chipText: 'text-sky-600 dark:text-sky-300',
     pill: 'bg-sky-50 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300',
     soft: 'bg-sky-50 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300',
+    solid: 'border-sky-500 bg-sky-500 text-white',
   },
   slate: {
     bar: 'bg-slate-400',
@@ -58,6 +64,7 @@ export const COLOR_ACCENTS = {
     chipText: 'text-slate-600 dark:text-slate-300',
     pill: 'bg-slate-100 text-slate-600 dark:bg-slate-500/20 dark:text-slate-300',
     soft: 'bg-slate-100 text-slate-600 dark:bg-slate-500/20 dark:text-slate-300',
+    solid: 'border-slate-500 bg-slate-500 text-white',
   },
 }
 
