@@ -78,7 +78,7 @@ export default function Topbar() {
   }
 
   return (
-    <header className="hidden md:flex items-center gap-4 border-b border-slate-200/70 bg-white/80 px-8 py-3 backdrop-blur dark:border-ink-border dark:bg-ink-card/80">
+    <header className="relative z-30 hidden md:flex items-center gap-4 border-b border-slate-200/70 bg-white/80 px-8 py-3 backdrop-blur dark:border-ink-border dark:bg-ink-card/80">
       <div ref={boxRef} className="relative flex-1 max-w-xl">
         <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <input
