@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
 import { typeAccent } from '../lib/accents.js'
+import { bucketFor } from '../lib/due.js'
 import ProgressRing from '../components/ProgressRing.jsx'
 import StatusSelect from '../components/StatusSelect.jsx'
 import ProblemProgress from '../components/ProblemProgress.jsx'
@@ -21,16 +22,17 @@ export default function Dashboard() {
   const { assignments, courses, stats, setStatus, loading } = useAssignments()
   const navigate = useNavigate()
 
-  const upcoming = [...assignments]
-    .filter((a) => a.status !== 'completed')
+  // Anything not completed that's overdue, due today, or due within 7 days.
+  const NEAR_TERM = ['overdue', 'today', 'week']
+  const deadlines = [...assignments]
+    .filter((a) => NEAR_TERM.includes(bucketFor(a)))
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-  const deadlines = upcoming.slice(0, 5)
 
   const subtitle = loading
     ? 'Loading your work…'
-    : upcoming.length === 0
+    : deadlines.length === 0
       ? "You're all caught up — nice work."
-      : `You have ${upcoming.length} upcoming ${upcoming.length === 1 ? 'deadline' : 'deadlines'}.`
+      : `You have ${deadlines.length} ${deadlines.length === 1 ? 'deadline' : 'deadlines'} due within a week.`
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-6 md:px-8 md:py-8">
