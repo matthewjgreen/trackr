@@ -57,6 +57,24 @@ export const COLOR_ACCENTS = {
     soft: 'bg-sky-50 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300',
     solid: 'border-sky-500 bg-sky-500 text-white',
   },
+  cyan: {
+    bar: 'bg-cyan-500',
+    dot: 'bg-cyan-500',
+    chipBg: 'bg-cyan-50 dark:bg-cyan-500/15',
+    chipText: 'text-cyan-600 dark:text-cyan-300',
+    pill: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-300',
+    soft: 'bg-cyan-50 text-cyan-600 dark:bg-cyan-500/15 dark:text-cyan-300',
+    solid: 'border-cyan-500 bg-cyan-500 text-white',
+  },
+  orange: {
+    bar: 'bg-orange-500',
+    dot: 'bg-orange-500',
+    chipBg: 'bg-orange-50 dark:bg-orange-500/15',
+    chipText: 'text-orange-600 dark:text-orange-300',
+    pill: 'bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300',
+    soft: 'bg-orange-50 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300',
+    solid: 'border-orange-500 bg-orange-500 text-white',
+  },
   slate: {
     bar: 'bg-slate-400',
     dot: 'bg-slate-400',
@@ -79,10 +97,10 @@ export function accentFor(color) {
 // (Project = blue, Quiz = amber, Reading/Paper = violet, …).
 export const TYPE_COLORS = {
   Project: 'blue',
-  Quiz: 'amber',
+  Quiz: 'cyan', // distinct from the amber "In Progress" status
   Exam: 'rose',
   Test: 'rose', // legacy alias for Exam
-  Homework: 'emerald',
+  Homework: 'orange', // distinct from the green "Completed" status
   Paper: 'violet',
   Application: 'sky',
   Other: 'slate',
