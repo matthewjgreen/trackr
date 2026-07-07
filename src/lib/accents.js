@@ -80,7 +80,8 @@ export function accentFor(color) {
 export const TYPE_COLORS = {
   Project: 'blue',
   Quiz: 'amber',
-  Test: 'rose',
+  Exam: 'rose',
+  Test: 'rose', // legacy alias for Exam
   Homework: 'emerald',
   Paper: 'violet',
   Application: 'sky',

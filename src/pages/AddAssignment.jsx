@@ -6,7 +6,7 @@ import { STATUSES, DEFAULT_STATUS } from '../lib/status.js'
 import { typeAccent } from '../lib/accents.js'
 import { typeIcon, PaperclipIcon, LinkIcon } from '../components/Icons.jsx'
 
-const TYPES = ['Test', 'Quiz', 'Homework', 'Project', 'Paper', 'Application', 'Other']
+const TYPES = ['Homework', 'Quiz', 'Exam', 'Project', 'Paper', 'Application', 'Other']
 
 // The default due time for a new assignment: 11:59 PM today (local).
 function defaultDueLocal() {
@@ -20,7 +20,7 @@ function makeEmptyForm() {
     title: '',
     courseId: '',
     dueDate: defaultDueLocal(),
-    type: 'Test',
+    type: 'Homework',
     customType: '',
     priority: 'Normal',
     status: DEFAULT_STATUS,
@@ -48,13 +48,15 @@ function toLocalInput(iso) {
 // Fill the form from an existing assignment (for edit mode). A type that isn't
 // one of the presets becomes the custom "Other" value.
 function fromAssignment(a) {
-  const known = TYPES.includes(a.type)
+  // Legacy assignments used "Test"; it's now "Exam".
+  const type = a.type === 'Test' ? 'Exam' : a.type
+  const known = TYPES.includes(type)
   return {
     title: a.title ?? '',
     courseId: a.courseId ?? '',
     dueDate: a.dueDate ? toLocalInput(a.dueDate) : '',
-    type: known ? a.type : 'Other',
-    customType: known ? '' : a.type,
+    type: known ? type : 'Other',
+    customType: known ? '' : type,
     priority: a.priority ?? 'Normal',
     status: a.status ?? DEFAULT_STATUS,
     totalProblems: a.totalProblems ? String(a.totalProblems) : '',
@@ -115,7 +117,6 @@ export default function AddAssignment() {
 
   function validate() {
     if (!form.title.trim()) return 'Please add an assignment title.'
-    if (!form.courseId) return 'Please choose a course.'
     if (!form.dueDate) return 'Please set a due date.'
     return ''
   }
@@ -179,7 +180,9 @@ export default function AddAssignment() {
 
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300">Course Name</label>
+              <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300">
+                Course Name <span className="font-normal text-slate-400">(optional)</span>
+              </label>
               <select
                 value={form.courseId}
                 onChange={(e) => set('courseId', e.target.value)}

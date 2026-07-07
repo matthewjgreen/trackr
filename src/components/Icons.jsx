@@ -117,7 +117,8 @@ export const OtherIcon = (p) => (
 )
 
 export const typeIcon = {
-  Test: TestIcon,
+  Exam: TestIcon,
+  Test: TestIcon, // legacy alias for Exam
   Quiz: QuizIcon,
   Homework: HomeworkIcon,
   Project: ProjectIcon,
