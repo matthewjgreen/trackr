@@ -225,11 +225,12 @@ export function AssignmentsProvider({ children }) {
     const total = assignments.length
     const completed = assignments.filter((a) => a.status === 'completed').length
     const inProgress = assignments.filter((a) => a.status === 'in_progress').length
+    const notStarted = assignments.filter((a) => a.status === 'not_started').length
     const overdue = assignments.filter(
       (a) => a.status !== 'completed' && new Date(a.dueDate) < now
     ).length
     const percent = total === 0 ? 0 : Math.round((completed / total) * 100)
-    return { total, completed, inProgress, overdue, percent }
+    return { total, completed, inProgress, notStarted, overdue, percent }
   }, [assignments])
 
   const value = {

@@ -10,11 +10,11 @@ import { ClockIcon, TrendIcon, EditIcon } from '../components/Icons.jsx'
 
 const MONTHS3 = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 
-const STAT_CARDS = [
-  { key: 'total', label: 'Total', tone: 'bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-300' },
-  { key: 'inProgress', label: 'In Progress', tone: 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400' },
-  { key: 'completed', label: 'Completed', tone: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' },
-  { key: 'overdue', label: 'Overdue', tone: 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400' },
+// Segments of the progress donut, in draw order. `key` indexes into `stats`.
+const RING_SEGMENTS = [
+  { key: 'notStarted', label: 'Not Started', colorClass: 'text-slate-300 dark:text-slate-600', dot: 'bg-slate-300 dark:bg-slate-600' },
+  { key: 'inProgress', label: 'In Progress', colorClass: 'text-amber-400', dot: 'bg-amber-400' },
+  { key: 'completed', label: 'Completed', colorClass: 'text-emerald-500', dot: 'bg-emerald-500' },
 ]
 
 export default function Dashboard() {
@@ -124,22 +124,27 @@ export default function Dashboard() {
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card dark:border-ink-border dark:bg-ink-card">
             <div className="flex flex-col items-center gap-6">
-              <ProgressRing percent={stats.percent} />
-              <div className="grid w-full grid-cols-2 gap-3">
-                {STAT_CARDS.map((c) => (
-                  <div key={c.key} className={`rounded-xl px-4 py-3 ${c.tone}`}>
-                    <p className="text-2xl font-extrabold leading-none">
-                      {String(stats[c.key] ?? 0).padStart(2, '0')}
-                    </p>
-                    <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-widest opacity-70">
-                      {c.label}
-                    </p>
+              <ProgressRing segments={RING_SEGMENTS.map((s) => ({ ...s, value: stats[s.key] ?? 0 }))} />
+              <div className="grid w-full grid-cols-3 gap-2">
+                {RING_SEGMENTS.map((s) => (
+                  <div key={s.key} className="flex flex-col items-center gap-1 text-center">
+                    <span className="flex items-center gap-1.5">
+                      <span className={`h-2.5 w-2.5 rounded-full ${s.dot}`} />
+                      <span className="text-lg font-extrabold leading-none text-slate-800 dark:text-slate-100">
+                        {stats[s.key] ?? 0}
+                      </span>
+                    </span>
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                      {s.label}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
             <p className="mt-5 text-center text-xs text-slate-400">
-              {stats.completed} of {stats.total} assignments completed.
+              {stats.total === 0
+                ? 'No assignments yet.'
+                : `${stats.completed} of ${stats.total} assignments completed.`}
             </p>
           </div>
         </section>
