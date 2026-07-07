@@ -468,23 +468,25 @@ function CoursesSection() {
   const { courses, addCourse, updateCourse, removeCourse } = useAssignments()
   const [newName, setNewName] = useState('')
   const [newColor, setNewColor] = useState(COLOR_OPTIONS[0])
+  const [newStartTime, setNewStartTime] = useState('')
   const [busy, setBusy] = useState(false)
 
   async function add(e) {
     e.preventDefault()
     if (!newName.trim()) return
     setBusy(true)
-    await addCourse({ name: newName.trim(), color: newColor })
+    await addCourse({ name: newName.trim(), color: newColor, startTime: newStartTime })
     setBusy(false)
     setNewName('')
     setNewColor(COLOR_OPTIONS[0])
+    setNewStartTime('')
   }
 
   return (
-    <Card icon={BookIcon} title="Courses" subtitle="Add, rename, recolor, or remove your courses">
+    <Card icon={BookIcon} title="Courses" subtitle="Add, rename, recolor, set a class time, or remove your courses">
       <ul className="space-y-2">
         {courses.map((c) => (
-          <li key={c.id} className="flex items-center gap-2 rounded-xl border border-slate-100 p-2 dark:border-ink-border">
+          <li key={c.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-slate-100 p-2 dark:border-ink-border">
             <ColorPicker value={c.color} onChange={(color) => updateCourse(c.id, { color })} />
             <input
               defaultValue={c.name}
@@ -493,6 +495,16 @@ function CoursesSection() {
                 if (name && name !== c.name) updateCourse(c.id, { name })
               }}
               className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-2 py-1.5 text-sm font-medium text-slate-700 outline-none focus:border-slate-200 focus:bg-slate-50 dark:text-slate-100 dark:focus:border-slate-600 dark:focus:bg-slate-700"
+            />
+            <input
+              type="time"
+              defaultValue={c.startTime}
+              onBlur={(e) => {
+                const startTime = e.target.value
+                if (startTime !== (c.startTime ?? '')) updateCourse(c.id, { startTime })
+              }}
+              title="Class start time"
+              className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
             />
             <button
               onClick={() => removeCourse(c.id)}
@@ -510,13 +522,20 @@ function CoursesSection() {
         )}
       </ul>
 
-      <form onSubmit={add} className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-4 dark:border-ink-border">
+      <form onSubmit={add} className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4 dark:border-ink-border">
         <ColorPicker value={newColor} onChange={setNewColor} />
         <input
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="e.g. MATH 240"
           className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+        />
+        <input
+          type="time"
+          value={newStartTime}
+          onChange={(e) => setNewStartTime(e.target.value)}
+          title="Class start time (optional)"
+          className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
         />
         <button type="submit" disabled={busy} className="flex items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
           <PlusIcon className="h-4 w-4" /> Add

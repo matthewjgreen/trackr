@@ -8,6 +8,20 @@ import { DEFAULT_STATUS } from '../lib/status.js'
 const AssignmentsContext = createContext(null)
 
 // --- row <-> app-object mappers (DB is snake_case, app is camelCase) ---
+function courseFromRow(c) {
+  return { id: c.id, name: c.name, color: c.color, startTime: c.start_time ?? '' }
+}
+
+// Map an app-shaped course patch to DB columns. Only includes keys present in
+// `data`, so partial updates (e.g. just a color) stay partial.
+function courseToRow(data) {
+  const row = {}
+  if ('name' in data) row.name = data.name
+  if ('color' in data) row.color = data.color
+  if ('startTime' in data) row.start_time = data.startTime || null
+  return row
+}
+
 function assignmentFromRow(r) {
   // `status` is canonical; fall back to the legacy `completed` boolean for rows
   // created before the status column existed.
@@ -84,7 +98,7 @@ export function AssignmentsProvider({ children }) {
         .order('due_date', { ascending: true })
       if (aErr) throw aErr
 
-      setCourses(courseRows.map((c) => ({ id: c.id, name: c.name, color: c.color })))
+      setCourses(courseRows.map(courseFromRow))
       setAssignments((rows ?? []).map(assignmentFromRow))
     } catch (e) {
       setError(e.message ?? 'Failed to load data.')
@@ -102,24 +116,24 @@ export function AssignmentsProvider({ children }) {
     }
   }, [user, loadData])
 
-  async function addCourse({ name, color }) {
+  async function addCourse({ name, color, startTime }) {
     const { data: row, error } = await supabase
       .from('courses')
-      .insert({ name, color })
+      .insert(courseToRow({ name, color, startTime }))
       .select()
       .single()
     if (error) {
       setError(error.message)
       return null
     }
-    setCourses((prev) => [...prev, { id: row.id, name: row.name, color: row.color }])
+    setCourses((prev) => [...prev, courseFromRow(row)])
     return row.id
   }
 
   async function updateCourse(id, patch) {
     const prev = courses
     setCourses((p) => p.map((c) => (c.id === id ? { ...c, ...patch } : c)))
-    const { error } = await supabase.from('courses').update(patch).eq('id', id)
+    const { error } = await supabase.from('courses').update(courseToRow(patch)).eq('id', id)
     if (error) {
       setError(error.message)
       setCourses(prev) // rollback
