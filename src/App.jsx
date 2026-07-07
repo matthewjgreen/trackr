@@ -53,11 +53,11 @@ function AuthedApp() {
     <div className="flex min-h-screen md:h-screen bg-slate-50 dark:bg-ink">
       <Sidebar />
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <MobileHeader />
         <Topbar />
 
-        <main className="flex-1 overflow-y-auto pb-24 md:pb-0">
+        <main className="min-h-0 flex-1 overflow-y-auto pb-24 md:pb-0">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/assignments" element={<Assignments />} />
