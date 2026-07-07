@@ -50,7 +50,7 @@ function AuthedApp() {
   )
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-ink">
+    <div className="flex min-h-screen md:h-screen bg-slate-50 dark:bg-ink">
       <Sidebar />
 
       <div className="flex min-w-0 flex-1 flex-col">
