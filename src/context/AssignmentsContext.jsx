@@ -26,6 +26,9 @@ function assignmentFromRow(r) {
   // `status` is canonical; fall back to the legacy `completed` boolean for rows
   // created before the status column existed.
   const status = r.status ?? (r.completed ? 'completed' : DEFAULT_STATUS)
+  const totalProblems = r.total_problems ?? 0
+  // A completed assignment always reads as 100% problems done.
+  const completedProblems = status === 'completed' ? totalProblems : (r.completed_problems ?? 0)
   return {
     id: r.id,
     title: r.title,
@@ -36,14 +39,19 @@ function assignmentFromRow(r) {
     priority: r.priority,
     status,
     completed: status === 'completed',
-    totalProblems: r.total_problems ?? 0,
-    completedProblems: r.completed_problems ?? 0,
+    totalProblems,
+    completedProblems,
     notes: r.notes ?? '',
   }
 }
 
 function assignmentToRow(data) {
   const status = data.status ?? DEFAULT_STATUS
+  const total = Math.max(0, data.totalProblems ?? 0)
+  // Completing an assignment fills its problem progress to 100%.
+  const completed = status === 'completed'
+    ? total
+    : Math.max(0, Math.min(data.completedProblems ?? 0, total))
   return {
     title: data.title,
     course_id: data.courseId || null,
@@ -53,8 +61,8 @@ function assignmentToRow(data) {
     priority: data.priority,
     status,
     completed: status === 'completed', // keep the legacy mirror in sync
-    total_problems: Math.max(0, data.totalProblems ?? 0),
-    completed_problems: Math.max(0, Math.min(data.completedProblems ?? 0, data.totalProblems ?? 0)),
+    total_problems: total,
+    completed_problems: completed,
     notes: data.notes ?? '',
   }
 }
@@ -173,13 +181,20 @@ export function AssignmentsProvider({ children }) {
 
   async function updateAssignment(id, patch) {
     const prev = assignments
+    const current = prev.find((a) => a.id === id)
     // Optimistic update so the UI feels instant. Keep the `completed` mirror in
-    // sync locally when the status changes.
-    const synced = patch.status ? { ...patch, completed: patch.status === 'completed' } : patch
+    // sync, and fill problem progress to 100% when marking complete.
+    const synced = { ...patch }
+    if (patch.status) {
+      synced.completed = patch.status === 'completed'
+      if (patch.status === 'completed' && patch.completedProblems === undefined && current) {
+        synced.completedProblems = current.totalProblems
+      }
+    }
     setAssignments((p) => p.map((a) => (a.id === id ? { ...a, ...synced } : a)))
     const { error } = await supabase
       .from('assignments')
-      .update(assignmentToRow({ ...prev.find((a) => a.id === id), ...patch }))
+      .update(assignmentToRow({ ...current, ...synced }))
       .eq('id', id)
     if (error) {
       setError(error.message)
