@@ -9,18 +9,18 @@ export default {
         display: ['"Space Grotesk"', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // Royal-blue brand ramp (matches the redesign mockups).
+        // True-blue brand ramp (no violet cast).
         brand: {
-          50: '#eef2ff',
-          100: '#e0e8ff',
-          200: '#c4d1ff',
-          300: '#9db2ff',
-          400: '#6f8bff',
-          500: '#4f6bff',
-          600: '#3b5bfd',
-          700: '#2f49d6',
-          800: '#2a3fae',
-          900: '#273a8a',
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
         },
         mint: {
           50: '#ecfdf5',

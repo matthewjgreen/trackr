@@ -21,7 +21,7 @@ export default function Avatar({ size = 36, className = '' }) {
   return (
     <div
       style={dimension}
-      className={`flex items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-fuchsia-500 font-bold text-white ring-2 ring-white dark:ring-slate-700 ${className}`}
+      className={`flex items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-sky-400 font-bold text-white ring-2 ring-white dark:ring-slate-700 ${className}`}
     >
       <span style={{ fontSize: size * 0.42 }}>{initial}</span>
     </div>
