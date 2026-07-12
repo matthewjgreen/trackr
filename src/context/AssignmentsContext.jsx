@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase.js'
 import { useAuth } from './AuthContext.jsx'
 import { useToast } from './ToastContext.jsx'
 import { DEFAULT_COURSES } from '../data/seed.js'
-import { DEFAULT_STATUS } from '../lib/status.js'
+import { DEFAULT_STATUS, isStudyType } from '../lib/status.js'
 
 const AssignmentsContext = createContext(null)
 
@@ -227,7 +227,7 @@ export function AssignmentsProvider({ children }) {
     const inProgress = assignments.filter((a) => a.status === 'in_progress').length
     const notStarted = assignments.filter((a) => a.status === 'not_started').length
     const overdue = assignments.filter(
-      (a) => a.status !== 'completed' && new Date(a.dueDate) < now
+      (a) => a.status !== 'completed' && !isStudyType(a.type) && new Date(a.dueDate) < now
     ).length
     const percent = total === 0 ? 0 : Math.round((completed / total) * 100)
     return { total, completed, inProgress, notStarted, overdue, percent }

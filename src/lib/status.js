@@ -31,7 +31,12 @@ export function statusMeta(value) {
 // Quiz/Exam assignments use study-oriented status labels (the underlying
 // status values are unchanged, so all tracking still works). "Test" is the
 // legacy alias for "Exam".
-const STUDY_TYPES = ['Quiz', 'Exam', 'Test']
+export const STUDY_TYPES = ['Quiz', 'Exam', 'Test']
+
+export function isStudyType(type) {
+  return STUDY_TYPES.includes(type)
+}
+
 const STUDY_LABELS = {
   not_started: 'Need to study',
   in_progress: 'Feeling Prepared',
@@ -39,6 +44,6 @@ const STUDY_LABELS = {
 }
 
 export function statusLabel(value, type) {
-  if (STUDY_TYPES.includes(type) && STUDY_LABELS[value]) return STUDY_LABELS[value]
+  if (isStudyType(type) && STUDY_LABELS[value]) return STUDY_LABELS[value]
   return statusMeta(value).label
 }

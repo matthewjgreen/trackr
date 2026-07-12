@@ -69,7 +69,7 @@ export default function Assignments() {
     const accent = accentFor(course?.color)
     const tone = typeAccent(a.type)
     const done = a.status === 'completed'
-    const dm = dueMeta(a.dueDate)
+    const dm = dueMeta(a.dueDate, a.type)
     return (
       <li
         key={a.id}

@@ -2,21 +2,74 @@ import { useNavigate } from 'react-router-dom'
 import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
 import { typeAccent } from '../lib/accents.js'
 import { bucketFor } from '../lib/due.js'
+import { isStudyType } from '../lib/status.js'
 import ProgressRing from '../components/ProgressRing.jsx'
 import StatusSelect from '../components/StatusSelect.jsx'
 import ProblemProgress from '../components/ProblemProgress.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import { SkeletonRows } from '../components/Skeleton.jsx'
-import { ClockIcon, TrendIcon, EditIcon } from '../components/Icons.jsx'
+import { ClockIcon, TrendIcon, EditIcon, TestIcon } from '../components/Icons.jsx'
 
 const MONTHS3 = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 
-// Segments of the progress donut, in draw order. `key` indexes into `stats`.
+// Segments of the progress donut, in draw order. `key` indexes into the stats
+// object; `label` is the legend text (study wheel uses study-oriented labels).
 const RING_SEGMENTS = [
   { key: 'notStarted', label: 'Not Started', colorClass: 'text-slate-300 dark:text-slate-600', dot: 'bg-slate-300 dark:bg-slate-600' },
   { key: 'inProgress', label: 'In Progress', colorClass: 'text-amber-400', dot: 'bg-amber-400' },
   { key: 'completed', label: 'Completed', colorClass: 'text-emerald-500', dot: 'bg-emerald-500' },
 ]
+
+const STUDY_RING_SEGMENTS = [
+  { key: 'notStarted', label: 'Need to study', colorClass: 'text-slate-300 dark:text-slate-600', dot: 'bg-slate-300 dark:bg-slate-600' },
+  { key: 'inProgress', label: 'Feeling Prepared', colorClass: 'text-amber-400', dot: 'bg-amber-400' },
+  { key: 'completed', label: 'Completed', colorClass: 'text-emerald-500', dot: 'bg-emerald-500' },
+]
+
+function statusCounts(items) {
+  return {
+    notStarted: items.filter((a) => a.status === 'not_started').length,
+    inProgress: items.filter((a) => a.status === 'in_progress').length,
+    completed: items.filter((a) => a.status === 'completed').length,
+  }
+}
+
+// A titled card with a segmented status donut + legend. Used for both the
+// overall Progress wheel and the Quizzes & Exams wheel.
+function StatusWheel({ icon: Icon, iconClass, title, segments, counts, caption, footer }) {
+  const total = segments.reduce((sum, s) => sum + (counts[s.key] ?? 0), 0)
+  const defaultFooter =
+    total === 0 ? `No ${title.toLowerCase()} yet.` : `${counts.completed ?? 0} of ${total} completed.`
+  return (
+    <div>
+      <div className="mb-4 flex items-center gap-2">
+        <Icon className={`h-5 w-5 ${iconClass}`} />
+        <h2 className="font-display text-lg font-bold text-slate-800 dark:text-slate-100">{title}</h2>
+      </div>
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card dark:border-ink-border dark:bg-ink-card">
+        <div className="flex flex-col items-center gap-6">
+          <ProgressRing caption={caption} segments={segments.map((s) => ({ ...s, value: counts[s.key] ?? 0 }))} />
+          <div className="grid w-full grid-cols-3 gap-2">
+            {segments.map((s) => (
+              <div key={s.label} className="flex flex-col items-center gap-1 text-center">
+                <span className="flex items-center gap-1.5">
+                  <span className={`h-2.5 w-2.5 rounded-full ${s.dot}`} />
+                  <span className="text-lg font-extrabold leading-none text-slate-800 dark:text-slate-100">
+                    {counts[s.key] ?? 0}
+                  </span>
+                </span>
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                  {s.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <p className="mt-5 text-center text-xs text-slate-400">{footer ?? defaultFooter}</p>
+      </div>
+    </div>
+  )
+}
 
 export default function Dashboard() {
   const { assignments, courses, stats, setStatus, loading } = useAssignments()
@@ -27,6 +80,8 @@ export default function Dashboard() {
   const deadlines = [...assignments]
     .filter((a) => NEAR_TERM.includes(bucketFor(a)))
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+
+  const studyStats = statusCounts(assignments.filter((a) => isStudyType(a.type)))
 
   const subtitle = loading
     ? 'Loading your work…'
@@ -118,37 +173,28 @@ export default function Dashboard() {
           )}
         </section>
 
-        {/* Progress */}
-        <section>
-          <div className="mb-4 flex items-center gap-2">
-            <TrendIcon className="h-5 w-5 text-mint-500" />
-            <h2 className="font-display text-lg font-bold text-slate-800 dark:text-slate-100">Progress</h2>
-          </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card dark:border-ink-border dark:bg-ink-card">
-            <div className="flex flex-col items-center gap-6">
-              <ProgressRing segments={RING_SEGMENTS.map((s) => ({ ...s, value: stats[s.key] ?? 0 }))} />
-              <div className="grid w-full grid-cols-3 gap-2">
-                {RING_SEGMENTS.map((s) => (
-                  <div key={s.key} className="flex flex-col items-center gap-1 text-center">
-                    <span className="flex items-center gap-1.5">
-                      <span className={`h-2.5 w-2.5 rounded-full ${s.dot}`} />
-                      <span className="text-lg font-extrabold leading-none text-slate-800 dark:text-slate-100">
-                        {stats[s.key] ?? 0}
-                      </span>
-                    </span>
-                    <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                      {s.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <p className="mt-5 text-center text-xs text-slate-400">
-              {stats.total === 0
+        {/* Progress wheels */}
+        <section className="space-y-6">
+          <StatusWheel
+            icon={TrendIcon}
+            iconClass="text-mint-500"
+            title="Progress"
+            segments={RING_SEGMENTS}
+            counts={stats}
+            footer={
+              stats.total === 0
                 ? 'No assignments yet.'
-                : `${stats.completed} of ${stats.total} assignments completed.`}
-            </p>
-          </div>
+                : `${stats.completed} of ${stats.total} assignments completed.`
+            }
+          />
+          <StatusWheel
+            icon={TestIcon}
+            iconClass="text-rose-500"
+            title="Quizzes & Exams"
+            caption="Quizzes & Exams"
+            segments={STUDY_RING_SEGMENTS}
+            counts={studyStats}
+          />
         </section>
       </div>
     </div>

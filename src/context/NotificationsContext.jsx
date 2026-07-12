@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useAssignments } from './AssignmentsContext.jsx'
+import { isStudyType } from '../lib/status.js'
 import {
   pushSupported, registerServiceWorker, subscribeToPush, saveSubscription,
   unsubscribeFromPush, getSubscription,
@@ -144,7 +145,8 @@ export function NotificationsProvider({ children }) {
       const diffHrs = diffMs / 3600000
 
       if (diffMs < 0) {
-        if (prefs.overdue) {
+        // Quizzes/exams are never treated as overdue.
+        if (prefs.overdue && !isStudyType(a.type)) {
           list.push({
             id: `${a.id}:overdue`,
             type: 'overdue',

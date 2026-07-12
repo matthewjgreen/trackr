@@ -1,7 +1,8 @@
 // Relative due-date label + color tone + time bucket for an assignment.
 // Used for the colored due badges and the time-grouped Assignments list.
+import { isStudyType } from './status.js'
 
-export function dueMeta(dueDate) {
+export function dueMeta(dueDate, type) {
   const due = new Date(dueDate)
   const now = new Date()
   const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate())
@@ -12,7 +13,12 @@ export function dueMeta(dueDate) {
   const rose = 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400'
   const slate = 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
 
+  const dateLabel = due.toLocaleDateString([], { month: 'short', day: 'numeric' })
+
   if (ms < 0) {
+    // Quizzes/exams are study items, not deadlines — they're never "overdue".
+    // A past one just shows its date neutrally.
+    if (isStudyType(type)) return { bucket: 'later', tone: slate, label: dateLabel }
     const ago = Math.abs(days)
     return { bucket: 'overdue', tone: rose, label: ago <= 0 ? 'Overdue' : `Overdue · ${ago}d` }
   }
@@ -40,5 +46,5 @@ export const DUE_BUCKETS = [
 
 export function bucketFor(assignment) {
   if (assignment.status === 'completed') return 'completed'
-  return dueMeta(assignment.dueDate).bucket
+  return dueMeta(assignment.dueDate, assignment.type).bucket
 }

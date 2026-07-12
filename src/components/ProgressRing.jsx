@@ -1,7 +1,7 @@
 // SVG donut that splits the ring into colored segments. Each segment is
 // { value, colorClass, label }; colorClass sets the arc color via currentColor
 // so it stays theme-aware. The center shows the total count.
-export default function ProgressRing({ segments = [], size = 200, stroke = 16 }) {
+export default function ProgressRing({ segments = [], size = 200, stroke = 16, caption }) {
   const radius = (size - stroke) / 2
   const circumference = 2 * Math.PI * radius
   const total = segments.reduce((sum, s) => sum + (s.value || 0), 0)
@@ -46,7 +46,7 @@ export default function ProgressRing({ segments = [], size = 200, stroke = 16 })
       <div className="absolute flex flex-col items-center">
         <span className="text-4xl font-extrabold text-slate-800 dark:text-white">{total}</span>
         <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-          {total === 1 ? 'Assignment' : 'Assignments'}
+          {caption ?? (total === 1 ? 'Assignment' : 'Assignments')}
         </span>
       </div>
     </div>
