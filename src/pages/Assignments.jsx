@@ -138,7 +138,7 @@ export default function Assignments() {
             Critical
           </span>
         )}
-        <StatusSelect value={a.status} onChange={(s) => setStatus(a.id, s)} />
+        <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
         <button
           onClick={() => navigate(`/assignments/${a.id}/edit`)}
           className="shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-700 dark:hover:text-brand-300"

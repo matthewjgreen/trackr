@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAssignments } from '../context/AssignmentsContext.jsx'
 import { useToast } from '../context/ToastContext.jsx'
-import { STATUSES, DEFAULT_STATUS } from '../lib/status.js'
+import { STATUSES, DEFAULT_STATUS, statusLabel } from '../lib/status.js'
 import { typeAccent } from '../lib/accents.js'
 import { typeIcon, PaperclipIcon, LinkIcon } from '../components/Icons.jsx'
 
@@ -272,7 +272,7 @@ export default function AddAssignment() {
                     }`}
                   >
                     <span className={`h-2 w-2 rounded-full ${selected ? 'bg-white' : s.dot}`} />
-                    {s.label}
+                    {statusLabel(s.value, form.type)}
                   </button>
                 )
               })}

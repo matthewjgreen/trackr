@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAssignments, formatDueLabel } from '../context/AssignmentsContext.jsx'
 import { typeAccent } from '../lib/accents.js'
-import { statusMeta } from '../lib/status.js'
+import { statusMeta, statusLabel } from '../lib/status.js'
 import EmptyState from '../components/EmptyState.jsx'
 import ProblemProgress from '../components/ProblemProgress.jsx'
 import { typeIcon, CalendarIcon, EditIcon } from '../components/Icons.jsx'
@@ -240,7 +240,7 @@ export default function Calendar() {
                     <ProblemProgress done={a.completedProblems} total={a.totalProblems} className="mt-1.5" />
                   </div>
                   <span className={`shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold ${statusMeta(a.status).pill}`}>
-                    {statusMeta(a.status).label}
+                    {statusLabel(a.status, a.type)}
                   </span>
                   <button
                     onClick={() => navigate(`/assignments/${a.id}/edit`)}

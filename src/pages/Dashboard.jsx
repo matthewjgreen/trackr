@@ -101,7 +101,7 @@ export default function Dashboard() {
                         <ProblemProgress done={a.completedProblems} total={a.totalProblems} className="mt-1.5" />
                       </div>
                       <div className="flex shrink-0 flex-col items-end gap-2">
-                        <StatusSelect value={a.status} onChange={(s) => setStatus(a.id, s)} />
+                        <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
                         <button
                           onClick={() => navigate(`/assignments/${a.id}/edit`)}
                           className="rounded-lg p-1 text-slate-400 transition hover:text-brand-600 dark:hover:text-brand-300"
