@@ -189,15 +189,17 @@ export default function Dashboard() {
                             <EditIcon className="h-4 w-4" />
                           </button>
                         </div>
-                        {(a.notes || course) && (
-                          <p className="mt-0.5 truncate text-sm text-slate-400">{a.notes || course?.name}</p>
-                        )}
-                        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                          <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
-                          <span className="flex items-center gap-1 text-xs text-slate-400">
+                        <div className="mt-0.5 flex items-center gap-2 text-sm text-slate-400">
+                          {(a.notes || course) && (
+                            <span className="min-w-0 truncate">{a.notes || course?.name}</span>
+                          )}
+                          <span className="flex shrink-0 items-center gap-1 text-xs">
                             <ClockIcon className="h-3.5 w-3.5" />
                             {due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
                           </span>
+                        </div>
+                        <div className="mt-2">
+                          <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
                         </div>
                         <ProblemProgress done={a.completedProblems} total={a.totalProblems} className="mt-2" />
                       </div>
