@@ -484,35 +484,39 @@ function CoursesSection() {
 
   return (
     <Card icon={BookIcon} title="Courses" subtitle="Add, rename, recolor, set a class time, or remove your courses">
-      <ul className="space-y-2">
+      <ul className="space-y-2.5">
         {courses.map((c) => (
-          <li key={c.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-slate-100 p-2 dark:border-ink-border">
-            <ColorPicker value={c.color} onChange={(color) => updateCourse(c.id, { color })} />
+          <li key={c.id} className="rounded-xl border border-slate-100 p-3 dark:border-ink-border">
             <input
               defaultValue={c.name}
               onBlur={(e) => {
                 const name = e.target.value.trim()
                 if (name && name !== c.name) updateCourse(c.id, { name })
               }}
-              className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-2 py-1.5 text-sm font-medium text-slate-700 outline-none focus:border-slate-200 focus:bg-slate-50 dark:text-slate-100 dark:focus:border-slate-600 dark:focus:bg-slate-700"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
             />
-            <input
-              type="time"
-              defaultValue={c.startTime}
-              onBlur={(e) => {
-                const startTime = e.target.value
-                if (startTime !== (c.startTime ?? '')) updateCourse(c.id, { startTime })
-              }}
-              title="Class start time"
-              className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
-            />
-            <button
-              onClick={() => removeCourse(c.id)}
-              className="rounded-lg p-2 text-slate-300 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
-              title="Delete course"
-            >
-              <TrashIcon className="h-4 w-4" />
-            </button>
+            <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
+              <ColorPicker value={c.color} onChange={(color) => updateCourse(c.id, { color })} />
+              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                Class time
+                <input
+                  type="time"
+                  defaultValue={c.startTime}
+                  onBlur={(e) => {
+                    const startTime = e.target.value
+                    if (startTime !== (c.startTime ?? '')) updateCourse(c.id, { startTime })
+                  }}
+                  className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+                />
+              </label>
+              <button
+                onClick={() => removeCourse(c.id)}
+                className="ml-auto rounded-lg p-2 text-slate-300 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
+                title="Delete course"
+              >
+                <TrashIcon className="h-4 w-4" />
+              </button>
+            </div>
           </li>
         ))}
         {courses.length === 0 && (
@@ -522,24 +526,28 @@ function CoursesSection() {
         )}
       </ul>
 
-      <form onSubmit={add} className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4 dark:border-ink-border">
-        <ColorPicker value={newColor} onChange={setNewColor} />
+      <form onSubmit={add} className="mt-4 border-t border-slate-100 pt-4 dark:border-ink-border">
         <input
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
-          placeholder="e.g. MATH 240"
-          className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+          placeholder="Course name — e.g. MATH 240"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
         />
-        <input
-          type="time"
-          value={newStartTime}
-          onChange={(e) => setNewStartTime(e.target.value)}
-          title="Class start time (optional)"
-          className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
-        />
-        <button type="submit" disabled={busy} className="flex items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
-          <PlusIcon className="h-4 w-4" /> Add
-        </button>
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <ColorPicker value={newColor} onChange={setNewColor} />
+          <label className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+            Class time
+            <input
+              type="time"
+              value={newStartTime}
+              onChange={(e) => setNewStartTime(e.target.value)}
+              className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+            />
+          </label>
+          <button type="submit" disabled={busy} className="ml-auto flex items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
+            <PlusIcon className="h-4 w-4" /> Add
+          </button>
+        </div>
       </form>
     </Card>
   )

@@ -80,10 +80,30 @@ export default function Assignments() {
             <Icon className="h-5 w-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className={`text-sm font-bold break-words ${done ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-100'}`}>
-              {a.title}
-            </p>
+            <div className="flex items-start justify-between gap-2">
+              <p className={`min-w-0 text-sm font-bold break-words ${done ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-100'}`}>
+                {a.title}
+              </p>
+              <div className="-mr-1 -mt-1 flex shrink-0 items-center gap-0.5">
+                <button
+                  onClick={() => navigate(`/assignments/${a.id}/edit`)}
+                  className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-700 dark:hover:text-brand-300"
+                  title="Edit"
+                >
+                  <EditIcon className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => removeAssignment(a.id)}
+                  className="rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
+                  title="Delete"
+                >
+                  <TrashIcon className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+              <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
               <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${tone.soft}`}>
                 {a.type}
               </span>
@@ -103,59 +123,41 @@ export default function Assignments() {
                 </span>
               )}
             </div>
-          </div>
-          <div className="flex shrink-0 items-center gap-0.5">
-            <button
-              onClick={() => navigate(`/assignments/${a.id}/edit`)}
-              className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-700 dark:hover:text-brand-300"
-              title="Edit"
-            >
-              <EditIcon className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => removeAssignment(a.id)}
-              className="rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
-              title="Delete"
-            >
-              <TrashIcon className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-          {a.totalProblems > 0 && (
-            <div className="flex items-center gap-2">
-              <div className="flex items-center rounded-lg border border-slate-200 dark:border-slate-600">
-                <button
-                  onClick={() => setProblems(a, a.completedProblems - 1)}
-                  disabled={a.completedProblems <= 0}
-                  className="px-2.5 py-1 text-sm font-bold text-slate-500 transition hover:text-brand-600 disabled:opacity-30 dark:text-slate-300"
-                  title="One fewer done"
-                >
-                  −
-                </button>
-                <span className="min-w-[3rem] text-center text-xs font-semibold tabular-nums text-slate-600 dark:text-slate-300">
-                  {a.completedProblems}/{a.totalProblems}
+            {a.totalProblems > 0 && (
+              <div className="mt-2.5 flex items-center gap-2">
+                <div className="flex items-center rounded-lg border border-slate-200 dark:border-slate-600">
+                  <button
+                    onClick={() => setProblems(a, a.completedProblems - 1)}
+                    disabled={a.completedProblems <= 0}
+                    className="px-2.5 py-1 text-sm font-bold text-slate-500 transition hover:text-brand-600 disabled:opacity-30 dark:text-slate-300"
+                    title="One fewer done"
+                  >
+                    −
+                  </button>
+                  <span className="min-w-[3rem] text-center text-xs font-semibold tabular-nums text-slate-600 dark:text-slate-300">
+                    {a.completedProblems}/{a.totalProblems}
+                  </span>
+                  <button
+                    onClick={() => setProblems(a, a.completedProblems + 1)}
+                    disabled={a.completedProblems >= a.totalProblems}
+                    className="px-2.5 py-1 text-sm font-bold text-slate-500 transition hover:text-brand-600 disabled:opacity-30 dark:text-slate-300"
+                    title="One more done"
+                  >
+                    +
+                  </button>
+                </div>
+                <div className="h-1.5 flex-1 max-w-[8rem] overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+                  <div
+                    className="h-full rounded-full bg-brand-500 transition-all"
+                    style={{ width: `${Math.round((a.completedProblems / a.totalProblems) * 100)}%` }}
+                  />
+                </div>
+                <span className="text-[10px] font-semibold tabular-nums text-slate-400">
+                  {Math.round((a.completedProblems / a.totalProblems) * 100)}%
                 </span>
-                <button
-                  onClick={() => setProblems(a, a.completedProblems + 1)}
-                  disabled={a.completedProblems >= a.totalProblems}
-                  className="px-2.5 py-1 text-sm font-bold text-slate-500 transition hover:text-brand-600 disabled:opacity-30 dark:text-slate-300"
-                  title="One more done"
-                >
-                  +
-                </button>
               </div>
-              <div className="h-1.5 w-16 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
-                <div
-                  className="h-full rounded-full bg-brand-500 transition-all"
-                  style={{ width: `${Math.round((a.completedProblems / a.totalProblems) * 100)}%` }}
-                />
-              </div>
-            </div>
-          )}
-          <div className="ml-auto">
-            <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
+            )}
           </div>
         </div>
       </li>
