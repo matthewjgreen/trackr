@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
 import { typeAccent } from '../lib/accents.js'
@@ -48,8 +49,8 @@ function StatusWheel({ icon: Icon, iconClass, title, segments, counts, caption, 
       </div>
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card dark:border-ink-border dark:bg-ink-card">
         <div className="flex flex-col items-center gap-6">
-          <ProgressRing caption={caption} size={176} segments={segments.map((s) => ({ ...s, value: counts[s.key] ?? 0 }))} />
-          <div className="grid w-full grid-cols-3 gap-3">
+          <ProgressRing caption={caption} segments={segments.map((s) => ({ ...s, value: counts[s.key] ?? 0 }))} />
+          <div className="grid w-full grid-cols-3 gap-2">
             {segments.map((s) => (
               <div key={s.label} className="flex flex-col items-center gap-1 text-center">
                 <span className="flex items-center gap-1.5">
@@ -98,7 +99,7 @@ export default function Dashboard() {
         <p className="mt-2 text-slate-500 dark:text-slate-400">{subtitle}</p>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* Upcoming deadlines */}
         <section className="lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
@@ -127,10 +128,48 @@ export default function Dashboard() {
                 const tone = typeAccent(a.type)
                 const due = new Date(a.dueDate)
                 return (
-                  <li
-                    key={a.id}
-                    className="relative rounded-2xl border border-slate-200 bg-white p-4 pl-5 shadow-card dark:border-ink-border dark:bg-ink-card"
-                  >
+                  <Fragment key={a.id}>
+                  {/* Desktop: original row */}
+                  <li className="relative hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-card dark:border-ink-border dark:bg-ink-card md:block">
+                    <span className={`absolute inset-y-0 left-0 w-1.5 rounded-l-2xl ${tone.bar}`} />
+                    <div className="flex items-center gap-4 pl-2">
+                      <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-200">
+                        <span className="text-[10px] font-bold tracking-wide">{MONTHS3[due.getMonth()]}</span>
+                        <span className="text-xl font-extrabold leading-none">{due.getDate()}</span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${tone.soft}`}>
+                            {a.type}
+                          </span>
+                          <span className="flex items-center gap-1 text-xs text-slate-400">
+                            <ClockIcon className="h-3.5 w-3.5" />
+                            {due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        <p className="mt-1 truncate text-[15px] font-bold text-slate-800 dark:text-slate-100">
+                          {a.title}
+                        </p>
+                        {(a.notes || course) && (
+                          <p className="truncate text-sm text-slate-400">{a.notes || course?.name}</p>
+                        )}
+                        <ProblemProgress done={a.completedProblems} total={a.totalProblems} className="mt-1.5" />
+                      </div>
+                      <div className="flex shrink-0 flex-col items-end gap-2">
+                        <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
+                        <button
+                          onClick={() => navigate(`/assignments/${a.id}/edit`)}
+                          className="rounded-lg p-1 text-slate-400 transition hover:text-brand-600 dark:hover:text-brand-300"
+                          title="Edit"
+                        >
+                          <EditIcon className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+
+                  {/* Mobile: stacked card */}
+                  <li className="relative rounded-2xl border border-slate-200 bg-white p-4 pl-5 shadow-card dark:border-ink-border dark:bg-ink-card md:hidden">
                     <span className={`absolute inset-y-0 left-0 w-1.5 rounded-l-2xl ${tone.bar}`} />
                     <div className="flex items-start gap-3.5">
                       <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-200">
@@ -164,6 +203,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </li>
+                  </Fragment>
                 )
               })}
             </ul>

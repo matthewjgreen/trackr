@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
 import { accentFor, typeAccent } from '../lib/accents.js'
@@ -71,10 +71,90 @@ export default function Assignments() {
     const done = a.status === 'completed'
     const dm = dueMeta(a.dueDate, a.type)
     return (
-      <li
-        key={a.id}
-        className="rounded-2xl bg-white p-3.5 border border-slate-200 shadow-card dark:border-ink-border dark:bg-ink-card sm:p-4"
-      >
+      <Fragment key={a.id}>
+        {/* Desktop: original single-line row */}
+        <li className="hidden items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-card dark:border-ink-border dark:bg-ink-card md:flex md:gap-4">
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tone.soft}`}>
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className={`truncate text-sm font-bold ${done ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-100'}`}>
+              {a.title}
+            </p>
+            <div className="mt-1 flex flex-wrap items-center gap-1.5">
+              <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${tone.soft}`}>
+                {a.type}
+              </span>
+              {course && (
+                <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${accent.soft}`}>
+                  {course.name}
+                </span>
+              )}
+              {!done && (
+                <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${dm.tone}`}>
+                  {dm.label}
+                </span>
+              )}
+            </div>
+            {a.totalProblems > 0 && (
+              <div className="mt-2 flex items-center gap-2">
+                <div className="flex items-center rounded-lg border border-slate-200 dark:border-slate-600">
+                  <button
+                    onClick={() => setProblems(a, a.completedProblems - 1)}
+                    disabled={a.completedProblems <= 0}
+                    className="px-2 py-0.5 text-sm font-bold text-slate-500 transition hover:text-brand-600 disabled:opacity-30 dark:text-slate-300"
+                    title="One fewer done"
+                  >
+                    −
+                  </button>
+                  <span className="min-w-[3rem] text-center text-xs font-semibold tabular-nums text-slate-600 dark:text-slate-300">
+                    {a.completedProblems}/{a.totalProblems}
+                  </span>
+                  <button
+                    onClick={() => setProblems(a, a.completedProblems + 1)}
+                    disabled={a.completedProblems >= a.totalProblems}
+                    className="px-2 py-0.5 text-sm font-bold text-slate-500 transition hover:text-brand-600 disabled:opacity-30 dark:text-slate-300"
+                    title="One more done"
+                  >
+                    +
+                  </button>
+                </div>
+                <div className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+                  <div
+                    className="h-full rounded-full bg-brand-500 transition-all"
+                    style={{ width: `${Math.round((a.completedProblems / a.totalProblems) * 100)}%` }}
+                  />
+                </div>
+                <span className="text-[10px] font-semibold text-slate-400">
+                  {Math.round((a.completedProblems / a.totalProblems) * 100)}%
+                </span>
+              </div>
+            )}
+          </div>
+          {a.priority === 'Critical' && !done && (
+            <span className="shrink-0 rounded-md bg-rose-50 px-2 py-1 text-[11px] font-bold text-rose-500 dark:bg-rose-500/10 dark:text-rose-400">
+              Critical
+            </span>
+          )}
+          <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
+          <button
+            onClick={() => navigate(`/assignments/${a.id}/edit`)}
+            className="shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-700 dark:hover:text-brand-300"
+            title="Edit"
+          >
+            <EditIcon className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => removeAssignment(a.id)}
+            className="shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
+            title="Delete"
+          >
+            <TrashIcon className="h-4 w-4" />
+          </button>
+        </li>
+
+        {/* Mobile: stacked card */}
+        <li className="rounded-2xl border border-slate-200 bg-white p-3.5 shadow-card dark:border-ink-border dark:bg-ink-card md:hidden">
         <div className="flex items-start gap-3">
           <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tone.soft}`}>
             <Icon className="h-5 w-5" />
@@ -160,7 +240,8 @@ export default function Assignments() {
             )}
           </div>
         </div>
-      </li>
+        </li>
+      </Fragment>
     )
   }
 

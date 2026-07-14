@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, Fragment } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
 import { useAssignments } from '../context/AssignmentsContext.jsx'
@@ -486,26 +486,18 @@ function CoursesSection() {
     <Card icon={BookIcon} title="Courses" subtitle="Add, rename, recolor, set a class time, or remove your courses">
       <ul className="space-y-2.5">
         {courses.map((c) => (
-          <li key={c.id} className="rounded-xl border border-slate-100 p-3 dark:border-ink-border">
-            <div className="flex items-center gap-2">
+          <Fragment key={c.id}>
+            {/* Desktop: original single-line row */}
+            <li className="hidden flex-wrap items-center gap-2 rounded-xl border border-slate-100 p-2 dark:border-ink-border md:flex">
+              <ColorPicker value={c.color} onChange={(color) => updateCourse(c.id, { color })} />
               <input
                 defaultValue={c.name}
                 onBlur={(e) => {
                   const name = e.target.value.trim()
                   if (name && name !== c.name) updateCourse(c.id, { name })
                 }}
-                className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+                className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-2 py-1.5 text-sm font-medium text-slate-700 outline-none focus:border-slate-200 focus:bg-slate-50 dark:text-slate-100 dark:focus:border-slate-600 dark:focus:bg-slate-700"
               />
-              <button
-                onClick={() => removeCourse(c.id)}
-                className="shrink-0 rounded-lg p-2 text-slate-300 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
-                title="Delete course"
-              >
-                <TrashIcon className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="mt-2.5 flex items-center justify-between gap-2">
-              <ColorPicker value={c.color} onChange={(color) => updateCourse(c.id, { color })} />
               <input
                 type="time"
                 defaultValue={c.startTime}
@@ -514,10 +506,51 @@ function CoursesSection() {
                   if (startTime !== (c.startTime ?? '')) updateCourse(c.id, { startTime })
                 }}
                 title="Class start time"
-                className="shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+                className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
               />
-            </div>
-          </li>
+              <button
+                onClick={() => removeCourse(c.id)}
+                className="rounded-lg p-2 text-slate-300 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
+                title="Delete course"
+              >
+                <TrashIcon className="h-4 w-4" />
+              </button>
+            </li>
+
+            {/* Mobile: name + delete on top, color + bigger class time below */}
+            <li className="rounded-xl border border-slate-100 p-3 dark:border-ink-border md:hidden">
+              <div className="flex items-center gap-2">
+                <input
+                  defaultValue={c.name}
+                  onBlur={(e) => {
+                    const name = e.target.value.trim()
+                    if (name && name !== c.name) updateCourse(c.id, { name })
+                  }}
+                  className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+                />
+                <button
+                  onClick={() => removeCourse(c.id)}
+                  className="shrink-0 rounded-lg p-2 text-slate-300 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
+                  title="Delete course"
+                >
+                  <TrashIcon className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="mt-2.5 flex items-center gap-3">
+                <ColorPicker value={c.color} onChange={(color) => updateCourse(c.id, { color })} />
+                <input
+                  type="time"
+                  defaultValue={c.startTime}
+                  onBlur={(e) => {
+                    const startTime = e.target.value
+                    if (startTime !== (c.startTime ?? '')) updateCourse(c.id, { startTime })
+                  }}
+                  title="Class start time"
+                  className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-base text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+                />
+              </div>
+            </li>
+          </Fragment>
         ))}
         {courses.length === 0 && (
           <li className="rounded-xl border border-dashed border-slate-200 p-4 text-center text-xs text-slate-400 dark:border-ink-border">
@@ -527,26 +560,50 @@ function CoursesSection() {
       </ul>
 
       <form onSubmit={add} className="mt-4 border-t border-slate-100 pt-4 dark:border-ink-border">
-        <div className="flex items-center gap-2">
+        {/* Desktop: original single line */}
+        <div className="hidden flex-wrap items-center gap-2 md:flex">
+          <ColorPicker value={newColor} onChange={setNewColor} />
           <input
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="e.g. MATH 240"
             className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           />
-          <button type="submit" disabled={busy} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
-            <PlusIcon className="h-4 w-4" /> Add
-          </button>
-        </div>
-        <div className="mt-2.5 flex items-center justify-between gap-2">
-          <ColorPicker value={newColor} onChange={setNewColor} />
           <input
             type="time"
             value={newStartTime}
             onChange={(e) => setNewStartTime(e.target.value)}
             title="Class start time (optional)"
-            className="shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
           />
+          <button type="submit" disabled={busy} className="flex items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
+            <PlusIcon className="h-4 w-4" /> Add
+          </button>
+        </div>
+
+        {/* Mobile: name + Add on top, color + bigger class time below */}
+        <div className="md:hidden">
+          <div className="flex items-center gap-2">
+            <input
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="e.g. MATH 240"
+              className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+            />
+            <button type="submit" disabled={busy} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
+              <PlusIcon className="h-4 w-4" /> Add
+            </button>
+          </div>
+          <div className="mt-2.5 flex items-center gap-3">
+            <ColorPicker value={newColor} onChange={setNewColor} />
+            <input
+              type="time"
+              value={newStartTime}
+              onChange={(e) => setNewStartTime(e.target.value)}
+              title="Class start time (optional)"
+              className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-base text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+            />
+          </div>
         </div>
       </form>
     </Card>
