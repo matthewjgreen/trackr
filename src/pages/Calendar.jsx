@@ -226,29 +226,33 @@ export default function Calendar() {
               return (
                 <li
                   key={a.id}
-                  className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-3 dark:border-ink-border dark:bg-slate-700/40"
+                  className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-3 dark:border-ink-border dark:bg-slate-700/40"
                 >
-                  <span className={`h-8 w-1 rounded-full ${accent.dot}`} />
+                  <span className={`w-1 self-stretch rounded-full ${accent.dot}`} />
                   <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${accent.pill}`}>
                     <Icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={`break-words text-sm font-semibold ${a.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-100'}`}>
-                      {a.title}
-                    </p>
-                    <p className="truncate text-xs text-slate-400">{formatDueLabel(a.dueDate)}</p>
-                    <ProblemProgress done={a.completedProblems} total={a.totalProblems} className="mt-1.5" />
+                    <div className="flex items-start justify-between gap-2">
+                      <p className={`min-w-0 break-words text-sm font-semibold ${a.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-100'}`}>
+                        {a.title}
+                      </p>
+                      <button
+                        onClick={() => navigate(`/assignments/${a.id}/edit`)}
+                        className="-mr-1 -mt-0.5 shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-600 dark:hover:text-brand-300"
+                        title="Edit"
+                      >
+                        <EditIcon className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <p className="mt-0.5 text-xs text-slate-400">{formatDueLabel(a.dueDate)}</p>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <span className={`rounded-md px-2 py-0.5 text-[10px] font-semibold ${statusMeta(a.status).pill}`}>
+                        {statusLabel(a.status, a.type)}
+                      </span>
+                      <ProblemProgress done={a.completedProblems} total={a.totalProblems} />
+                    </div>
                   </div>
-                  <span className={`shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold ${statusMeta(a.status).pill}`}>
-                    {statusLabel(a.status, a.type)}
-                  </span>
-                  <button
-                    onClick={() => navigate(`/assignments/${a.id}/edit`)}
-                    className="shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-600 dark:hover:text-brand-300"
-                    title="Edit"
-                  >
-                    <EditIcon className="h-4 w-4" />
-                  </button>
                 </li>
               )
             })}
