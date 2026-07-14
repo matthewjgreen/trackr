@@ -198,10 +198,10 @@ export default function Dashboard() {
                             {due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
                           </span>
                         </div>
-                        <div className="mt-2">
+                        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
                           <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
+                          <ProblemProgress done={a.completedProblems} total={a.totalProblems} />
                         </div>
-                        <ProblemProgress done={a.completedProblems} total={a.totalProblems} className="mt-2" />
                       </div>
                     </div>
                   </li>
