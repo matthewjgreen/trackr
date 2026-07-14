@@ -487,14 +487,23 @@ function CoursesSection() {
       <ul className="space-y-2.5">
         {courses.map((c) => (
           <li key={c.id} className="rounded-xl border border-slate-100 p-3 dark:border-ink-border">
-            <input
-              defaultValue={c.name}
-              onBlur={(e) => {
-                const name = e.target.value.trim()
-                if (name && name !== c.name) updateCourse(c.id, { name })
-              }}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                defaultValue={c.name}
+                onBlur={(e) => {
+                  const name = e.target.value.trim()
+                  if (name && name !== c.name) updateCourse(c.id, { name })
+                }}
+                className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+              />
+              <button
+                onClick={() => removeCourse(c.id)}
+                className="shrink-0 rounded-lg p-2 text-slate-300 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
+                title="Delete course"
+              >
+                <TrashIcon className="h-4 w-4" />
+              </button>
+            </div>
             <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
               <ColorPicker value={c.color} onChange={(color) => updateCourse(c.id, { color })} />
               <label className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
@@ -509,13 +518,6 @@ function CoursesSection() {
                   className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
                 />
               </label>
-              <button
-                onClick={() => removeCourse(c.id)}
-                className="ml-auto rounded-lg p-2 text-slate-300 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
-                title="Delete course"
-              >
-                <TrashIcon className="h-4 w-4" />
-              </button>
             </div>
           </li>
         ))}
@@ -527,12 +529,17 @@ function CoursesSection() {
       </ul>
 
       <form onSubmit={add} className="mt-4 border-t border-slate-100 pt-4 dark:border-ink-border">
-        <input
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          placeholder="Course name — e.g. MATH 240"
-          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
-        />
+        <div className="flex items-center gap-2">
+          <input
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            placeholder="Course name — e.g. MATH 240"
+            className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+          />
+          <button type="submit" disabled={busy} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
+            <PlusIcon className="h-4 w-4" /> Add
+          </button>
+        </div>
         <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
           <ColorPicker value={newColor} onChange={setNewColor} />
           <label className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
@@ -544,9 +551,6 @@ function CoursesSection() {
               className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
             />
           </label>
-          <button type="submit" disabled={busy} className="ml-auto flex items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
-            <PlusIcon className="h-4 w-4" /> Add
-          </button>
         </div>
       </form>
     </Card>
