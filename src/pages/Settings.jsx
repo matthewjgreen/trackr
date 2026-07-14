@@ -504,20 +504,18 @@ function CoursesSection() {
                 <TrashIcon className="h-4 w-4" />
               </button>
             </div>
-            <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <div className="mt-2.5 flex items-center justify-between gap-2">
               <ColorPicker value={c.color} onChange={(color) => updateCourse(c.id, { color })} />
-              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
-                Class time
-                <input
-                  type="time"
-                  defaultValue={c.startTime}
-                  onBlur={(e) => {
-                    const startTime = e.target.value
-                    if (startTime !== (c.startTime ?? '')) updateCourse(c.id, { startTime })
-                  }}
-                  className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
-                />
-              </label>
+              <input
+                type="time"
+                defaultValue={c.startTime}
+                onBlur={(e) => {
+                  const startTime = e.target.value
+                  if (startTime !== (c.startTime ?? '')) updateCourse(c.id, { startTime })
+                }}
+                title="Class start time"
+                className="shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+              />
             </div>
           </li>
         ))}
@@ -540,17 +538,15 @@ function CoursesSection() {
             <PlusIcon className="h-4 w-4" /> Add
           </button>
         </div>
-        <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
+        <div className="mt-2.5 flex items-center justify-between gap-2">
           <ColorPicker value={newColor} onChange={setNewColor} />
-          <label className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
-            Class time
-            <input
-              type="time"
-              value={newStartTime}
-              onChange={(e) => setNewStartTime(e.target.value)}
-              className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
-            />
-          </label>
+          <input
+            type="time"
+            value={newStartTime}
+            onChange={(e) => setNewStartTime(e.target.value)}
+            title="Class start time (optional)"
+            className="shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-600 outline-none focus:border-brand-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
+          />
         </div>
       </form>
     </Card>
