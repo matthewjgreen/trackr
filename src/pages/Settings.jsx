@@ -531,7 +531,7 @@ function CoursesSection() {
           <input
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            placeholder="Course name — e.g. MATH 240"
+            placeholder="e.g. MATH 240"
             className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-300 focus:bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           />
           <button type="submit" disabled={busy} className="flex shrink-0 items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">
