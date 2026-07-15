@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext.jsx'
 import { AssignmentsProvider, useAssignments } from './context/AssignmentsContext.jsx'
@@ -53,10 +53,24 @@ export default function App() {
   )
 }
 
+const SWIPE_SECTIONS = ['/', '/calendar', '/assignments']
+
 function AuthedApp({ booting }) {
   const location = useLocation()
   const { loading: dataLoading } = useAssignments()
   const swipe = useSwipeNav()
+
+  // Direction-aware slide: compare the current section to the previous one.
+  const curIndex = SWIPE_SECTIONS.indexOf(location.pathname)
+  const prevIndex = useRef(curIndex)
+  const dir =
+    curIndex !== -1 && prevIndex.current !== -1 && curIndex < prevIndex.current
+      ? 'left'
+      : 'right'
+  useEffect(() => {
+    prevIndex.current = curIndex
+  }, [curIndex])
+
   // The mobile "+" button is hidden where adding inline doesn't make sense.
   const hideFab = ['/assignments/new', '/calendar', '/settings'].some((p) =>
     location.pathname.startsWith(p)
@@ -76,14 +90,16 @@ function AuthedApp({ booting }) {
             onTouchStart={swipe.onTouchStart}
             onTouchEnd={swipe.onTouchEnd}
           >
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/assignments" element={<Assignments />} />
-              <Route path="/assignments/new" element={<AddAssignment />} />
-              <Route path="/assignments/:id/edit" element={<AddAssignment />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/settings" element={<Settings />} />
-            </Routes>
+            <div key={location.pathname} className={dir === 'left' ? 'animate-page-left' : 'animate-page-right'}>
+              <Routes location={location}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/assignments" element={<Assignments />} />
+                <Route path="/assignments/new" element={<AddAssignment />} />
+                <Route path="/assignments/:id/edit" element={<AddAssignment />} />
+                <Route path="/calendar" element={<Calendar />} />
+                <Route path="/settings" element={<Settings />} />
+              </Routes>
+            </div>
           </main>
         </div>
 
