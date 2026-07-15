@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext.jsx'
-import { AssignmentsProvider } from './context/AssignmentsContext.jsx'
+import { AssignmentsProvider, useAssignments } from './context/AssignmentsContext.jsx'
 import { NotificationsProvider } from './context/NotificationsContext.jsx'
 import { NotesProvider } from './context/NotesContext.jsx'
 import { ToastProvider } from './context/ToastContext.jsx'
@@ -28,16 +28,23 @@ export default function App() {
     return () => clearTimeout(t)
   }, [])
 
-  if (booting || loading) return <SplashScreen />
-
-  if (!session) return <Login />
+  // Logged out (or auth still resolving): show Login with the splash on top
+  // until auth has resolved and the minimum boot time has passed.
+  if (!session) {
+    return (
+      <>
+        <Login />
+        <SplashScreen done={!loading && !booting} />
+      </>
+    )
+  }
 
   return (
     <ToastProvider>
       <AssignmentsProvider>
         <NotificationsProvider>
           <NotesProvider>
-            <AuthedApp />
+            <AuthedApp booting={booting} />
           </NotesProvider>
         </NotificationsProvider>
       </AssignmentsProvider>
@@ -45,35 +52,41 @@ export default function App() {
   )
 }
 
-function AuthedApp() {
+function AuthedApp({ booting }) {
   const location = useLocation()
+  const { loading: dataLoading } = useAssignments()
   // The mobile "+" button is hidden where adding inline doesn't make sense.
   const hideFab = ['/assignments/new', '/calendar', '/settings'].some((p) =>
     location.pathname.startsWith(p)
   )
 
   return (
-    <div className="flex min-h-screen md:h-screen bg-slate-50 dark:bg-ink">
-      <Sidebar />
+    <>
+      <div className="flex min-h-screen md:h-screen bg-slate-50 dark:bg-ink">
+        <Sidebar />
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <MobileHeader />
-        <Topbar />
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <MobileHeader />
+          <Topbar />
 
-        <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pb-24 md:pb-0">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/assignments" element={<Assignments />} />
-            <Route path="/assignments/new" element={<AddAssignment />} />
-            <Route path="/assignments/:id/edit" element={<AddAssignment />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
-        </main>
+          <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pb-24 md:pb-0">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/assignments" element={<Assignments />} />
+              <Route path="/assignments/new" element={<AddAssignment />} />
+              <Route path="/assignments/:id/edit" element={<AddAssignment />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </main>
+        </div>
+
+        {!hideFab && <FloatingAddButton />}
+        <MobileNav />
       </div>
 
-      {!hideFab && <FloatingAddButton />}
-      <MobileNav />
-    </div>
+      {/* Stays until the user's data has actually loaded, then fades out. */}
+      <SplashScreen done={!booting && !dataLoading} />
+    </>
   )
 }
