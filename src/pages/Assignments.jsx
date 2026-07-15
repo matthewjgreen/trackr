@@ -183,7 +183,6 @@ export default function Assignments() {
             </div>
 
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-              <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
               <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${tone.soft}`}>
                 {a.type}
               </span>
@@ -202,6 +201,10 @@ export default function Assignments() {
                   Critical
                 </span>
               )}
+            </div>
+
+            <div className="mt-2.5">
+              <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
             </div>
 
             {a.totalProblems > 0 && (
