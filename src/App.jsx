@@ -1,9 +1,11 @@
+import { useState, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext.jsx'
 import { AssignmentsProvider } from './context/AssignmentsContext.jsx'
 import { NotificationsProvider } from './context/NotificationsContext.jsx'
 import { NotesProvider } from './context/NotesContext.jsx'
 import { ToastProvider } from './context/ToastContext.jsx'
+import SplashScreen from './components/SplashScreen.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import MobileNav from './components/MobileNav.jsx'
 import MobileHeader from './components/MobileHeader.jsx'
@@ -18,14 +20,15 @@ import Login from './pages/Login.jsx'
 
 export default function App() {
   const { session, loading } = useAuth()
+  // Always show the splash briefly on open, even if auth resolves instantly.
+  const [booting, setBooting] = useState(true)
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-ink">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-brand-600" />
-      </div>
-    )
-  }
+  useEffect(() => {
+    const t = setTimeout(() => setBooting(false), 1100)
+    return () => clearTimeout(t)
+  }, [])
+
+  if (booting || loading) return <SplashScreen />
 
   if (!session) return <Login />
 

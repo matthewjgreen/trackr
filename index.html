@@ -20,7 +20,42 @@
     <title>Trackr</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Instant splash shown while the app bundle loads; React replaces it on mount. -->
+      <div id="app-splash" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:#f8fafc;font-family:Inter,system-ui,sans-serif;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <svg width="52" height="52" viewBox="0 0 48 48" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="45" height="45" rx="13" fill="#ffffff" stroke="#e2e8f0" />
+            <g transform="rotate(38 24 24)">
+              <rect x="19.5" y="8.5" width="9" height="6" rx="2.6" fill="#f4a6c0" />
+              <rect x="19.5" y="14" width="9" height="3.2" fill="#cbd5e1" />
+              <rect x="19.5" y="16.8" width="9" height="16.4" fill="#f6b93b" />
+              <rect x="19.5" y="16.8" width="2.9" height="16.4" fill="#e5a72c" />
+              <path d="M19.5 33.2 H28.5 L24 39.6 Z" fill="#e7c9a0" />
+              <path d="M22.4 37.3 H25.6 L24 39.6 Z" fill="#334155" />
+            </g>
+          </svg>
+          <span id="app-splash-name" style="font-family:'Space Grotesk',Inter,system-ui,sans-serif;font-size:30px;font-weight:700;letter-spacing:-0.02em;color:#0f172a;">Trackr</span>
+        </div>
+        <div style="width:32px;height:32px;border:3px solid #e2e8f0;border-top-color:#2563eb;border-radius:9999px;animation:app-spin 0.7s linear infinite;"></div>
+      </div>
+    </div>
+    <style>@keyframes app-spin{to{transform:rotate(360deg)}}</style>
+    <script>
+      // Match the splash to the saved theme so there's no light/dark flash.
+      (function () {
+        try {
+          var t = localStorage.getItem('studyflow.theme');
+          var dark = t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) {
+            var s = document.getElementById('app-splash');
+            var n = document.getElementById('app-splash-name');
+            if (s) s.style.background = '#0f0f10';
+            if (n) n.style.color = '#ffffff';
+          }
+        } catch (e) {}
+      })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
