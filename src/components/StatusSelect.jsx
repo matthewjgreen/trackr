@@ -6,7 +6,9 @@ import { STATUSES, statusMeta, statusLabel } from '../lib/status.js'
 // assignments the labels read "Need to study" / "Feeling Prepared" instead.
 export default function StatusSelect({ value, onChange, type }) {
   const [open, setOpen] = useState(false)
+  const [pop, setPop] = useState(false)
   const ref = useRef(null)
+  const firstRender = useRef(true)
 
   useEffect(() => {
     function onClick(e) {
@@ -16,6 +18,17 @@ export default function StatusSelect({ value, onChange, type }) {
     return () => document.removeEventListener('mousedown', onClick)
   }, [])
 
+  // Pop the pill whenever the status changes (but not on first render).
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+      return
+    }
+    setPop(true)
+    const t = setTimeout(() => setPop(false), 260)
+    return () => clearTimeout(t)
+  }, [value])
+
   const meta = statusMeta(value)
 
   return (
@@ -23,7 +36,7 @@ export default function StatusSelect({ value, onChange, type }) {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition ${meta.pill}`}
+        className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition ${meta.pill} ${pop ? 'animate-pop' : ''}`}
       >
         <span className={`h-2 w-2 rounded-full ${meta.dot}`} />
         <span className="whitespace-nowrap">{statusLabel(value, type)}</span>
@@ -33,7 +46,7 @@ export default function StatusSelect({ value, onChange, type }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-30 mt-1 w-40 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-soft dark:border-ink-border dark:bg-ink-card">
+        <div className="animate-pop-in absolute right-0 z-30 mt-1 w-40 origin-top-right overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-soft dark:border-ink-border dark:bg-ink-card">
           {STATUSES.map((s) => (
             <button
               key={s.value}
