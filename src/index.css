@@ -25,6 +25,10 @@
 .animate-page-right { animation: pageInRight 260ms ease-out; }
 .animate-page-left { animation: pageInLeft 260ms ease-out; }
 
+/* Hide scrollbars on the swipe carousel (keeps scrolling functional). */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
 body {
   @apply bg-slate-50 text-slate-800 antialiased dark:bg-ink dark:text-slate-100;
   font-family: 'Inter', system-ui, sans-serif;
