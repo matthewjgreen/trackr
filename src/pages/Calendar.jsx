@@ -104,7 +104,7 @@ export default function Calendar() {
       : `${MONTHS[view.month]} ${view.year}`
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-6 md:px-8">
+    <div className="w-full px-5 py-6 md:px-8">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Calendar</h2>
