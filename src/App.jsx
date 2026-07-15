@@ -70,14 +70,16 @@ function AuthedApp({ booting }) {
           <Topbar />
 
           <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pb-24 md:pb-0">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/assignments" element={<Assignments />} />
-              <Route path="/assignments/new" element={<AddAssignment />} />
-              <Route path="/assignments/:id/edit" element={<AddAssignment />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/settings" element={<Settings />} />
-            </Routes>
+            <div key={location.pathname} className="animate-[fadeIn_.15s_ease-out]">
+              <Routes location={location}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/assignments" element={<Assignments />} />
+                <Route path="/assignments/new" element={<AddAssignment />} />
+                <Route path="/assignments/:id/edit" element={<AddAssignment />} />
+                <Route path="/calendar" element={<Calendar />} />
+                <Route path="/settings" element={<Settings />} />
+              </Routes>
+            </div>
           </main>
         </div>
 
