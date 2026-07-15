@@ -5,6 +5,7 @@ import { AssignmentsProvider, useAssignments } from './context/AssignmentsContex
 import { NotificationsProvider } from './context/NotificationsContext.jsx'
 import { NotesProvider } from './context/NotesContext.jsx'
 import { ToastProvider } from './context/ToastContext.jsx'
+import { useSwipeNav } from './hooks/useSwipeNav.js'
 import SplashScreen from './components/SplashScreen.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import MobileNav from './components/MobileNav.jsx'
@@ -55,6 +56,7 @@ export default function App() {
 function AuthedApp({ booting }) {
   const location = useLocation()
   const { loading: dataLoading } = useAssignments()
+  const swipe = useSwipeNav()
   // The mobile "+" button is hidden where adding inline doesn't make sense.
   const hideFab = ['/assignments/new', '/calendar', '/settings'].some((p) =>
     location.pathname.startsWith(p)
@@ -69,7 +71,11 @@ function AuthedApp({ booting }) {
           <MobileHeader />
           <Topbar />
 
-          <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pb-24 md:pb-0">
+          <main
+            className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pb-24 md:pb-0"
+            onTouchStart={swipe.onTouchStart}
+            onTouchEnd={swipe.onTouchEnd}
+          >
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/assignments" element={<Assignments />} />
