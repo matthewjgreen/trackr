@@ -31,19 +31,22 @@ export default function Login() {
     }
 
     setBusy(true)
-    const errMsg =
-      mode === 'signin'
-        ? await signIn(email, password)
-        : await signUp(email, password)
-    setBusy(false)
-
-    if (errMsg) {
-      setError(errMsg)
-    } else if (mode === 'signup') {
-      // Depending on the project's email-confirmation setting, the user may
-      // need to confirm via email before a session is created.
-      setNotice('Account created! If email confirmation is on, check your inbox to finish signing in.')
+    if (mode === 'signin') {
+      const err = await signIn(email, password)
+      setBusy(false)
+      if (err) setError(err)
+      return
     }
+
+    const { error: err, needsConfirmation } = await signUp(email, password)
+    setBusy(false)
+    if (err) {
+      setError(err)
+    } else if (needsConfirmation) {
+      // Only shown if email confirmation is still enabled in Supabase.
+      setNotice('Account created! Check your inbox to confirm your email.')
+    }
+    // Otherwise a session was created and the app signs the user in automatically.
   }
 
   return (

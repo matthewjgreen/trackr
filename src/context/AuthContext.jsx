@@ -23,8 +23,10 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function signUp(email, password) {
-    const { error } = await supabase.auth.signUp({ email, password })
-    return error?.message ?? null
+    const { data, error } = await supabase.auth.signUp({ email, password })
+    // When email confirmation is disabled in Supabase, a session is returned
+    // immediately and onAuthStateChange logs the user straight in.
+    return { error: error?.message ?? null, needsConfirmation: !error && !data.session }
   }
 
   async function signIn(email, password) {
