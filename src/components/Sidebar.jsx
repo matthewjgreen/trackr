@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import Modal from './Modal.jsx'
 import Logo from './Logo.jsx'
@@ -23,10 +23,10 @@ export default function Sidebar() {
   return (
     <>
     <aside className="hidden md:flex md:w-60 lg:w-64 shrink-0 flex-col border-r border-slate-200/70 bg-white px-4 py-6 dark:border-ink-border dark:bg-ink-card">
-      <div className="mb-9 flex items-center gap-2.5 px-2">
+      <Link to="/" className="mb-9 flex items-center gap-2.5 rounded-xl px-2 transition hover:opacity-80">
         <Logo size={32} />
         <h1 className="font-display text-xl font-bold tracking-tight text-slate-900 dark:text-white">Trackr</h1>
-      </div>
+      </Link>
 
       <nav className="flex-1 space-y-1">
         {nav.map(({ to, label, icon: Icon, end }) => (

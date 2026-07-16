@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useMemo, useState, useCallback } 
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from './AuthContext.jsx'
 import { useToast } from './ToastContext.jsx'
-import { DEFAULT_COURSES } from '../data/seed.js'
 import { DEFAULT_STATUS, isStudyType } from '../lib/status.js'
 
 const AssignmentsContext = createContext(null)
@@ -75,30 +74,16 @@ export function AssignmentsProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // Insert the starter course set the first time a user signs in.
-  const seedCourses = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('courses')
-      .insert(DEFAULT_COURSES)
-      .select()
-    if (error) throw error
-    return data
-  }, [])
-
   const loadData = useCallback(async () => {
     if (!user) return
     setLoading(true)
     setError('')
     try {
-      let { data: courseRows, error: cErr } = await supabase
+      const { data: courseRows, error: cErr } = await supabase
         .from('courses')
         .select('*')
         .order('created_at', { ascending: true })
       if (cErr) throw cErr
-
-      if (!courseRows || courseRows.length === 0) {
-        courseRows = await seedCourses()
-      }
 
       const { data: rows, error: aErr } = await supabase
         .from('assignments')
@@ -106,14 +91,14 @@ export function AssignmentsProvider({ children }) {
         .order('due_date', { ascending: true })
       if (aErr) throw aErr
 
-      setCourses(courseRows.map(courseFromRow))
+      setCourses((courseRows ?? []).map(courseFromRow))
       setAssignments((rows ?? []).map(assignmentFromRow))
     } catch (e) {
       setError(e.message ?? 'Failed to load data.')
     } finally {
       setLoading(false)
     }
-  }, [user, seedCourses])
+  }, [user])
 
   useEffect(() => {
     if (user) loadData()
