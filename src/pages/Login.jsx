@@ -9,13 +9,11 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
-    setNotice('')
 
     if (!isSupabaseConfigured) {
       setError('Supabase isn’t configured yet. Add your URL + anon key to .env and restart the dev server.')
@@ -38,14 +36,9 @@ export default function Login() {
       return
     }
 
-    const { error: err, needsConfirmation } = await signUp(email, password)
+    const { error: err } = await signUp(email, password)
     setBusy(false)
-    if (err) {
-      setError(err)
-    } else if (needsConfirmation) {
-      // Only shown if email confirmation is still enabled in Supabase.
-      setNotice('Account created! Check your inbox to confirm your email.')
-    }
+    if (err) setError(err)
     // Otherwise a session was created and the app signs the user in automatically.
   }
 
@@ -94,9 +87,6 @@ export default function Login() {
             {error && (
               <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600">{error}</p>
             )}
-            {notice && (
-              <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-600">{notice}</p>
-            )}
 
             <button
               type="submit"
@@ -113,7 +103,6 @@ export default function Login() {
               onClick={() => {
                 setMode(mode === 'signin' ? 'signup' : 'signin')
                 setError('')
-                setNotice('')
               }}
               className="font-semibold text-brand-600 hover:underline"
             >
