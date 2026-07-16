@@ -200,7 +200,7 @@ export default function AddAssignment() {
                 type="datetime-local"
                 value={form.dueDate}
                 onChange={(e) => set('dueDate', e.target.value)}
-                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-brand-300 focus:ring-2 focus:ring-brand-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+                className="mt-2 block h-[42px] w-full min-w-0 appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-brand-300 focus:ring-2 focus:ring-brand-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
               />
               <div className="mt-2 flex flex-wrap gap-2">
                 <button
