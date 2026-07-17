@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
 import { typeAccent } from '../lib/accents.js'
-import { bucketFor } from '../lib/due.js'
+import { dueMeta } from '../lib/due.js'
 import { isStudyType } from '../lib/status.js'
 import ProgressRing from '../components/ProgressRing.jsx'
 import StatusSelect from '../components/StatusSelect.jsx'
@@ -10,7 +10,7 @@ import { useCompleteUndo, CompletedBanner } from '../components/CompleteUndo.jsx
 import ProblemProgress from '../components/ProblemProgress.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import { SkeletonRows } from '../components/Skeleton.jsx'
-import { ClockIcon, TrendIcon, EditIcon, TestIcon } from '../components/Icons.jsx'
+import { ClockIcon, TrendIcon, EditIcon, TestIcon, AlertIcon } from '../components/Icons.jsx'
 
 const MONTHS3 = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 
@@ -78,20 +78,123 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const { pending, changeStatus, undo } = useCompleteUndo(setStatus)
 
-  // Anything not completed that's overdue, due today, or due within 7 days.
-  // Assignments in their undo window are kept in place so the banner can show.
-  const NEAR_TERM = ['overdue', 'today', 'week']
+  const now = new Date()
+  // Treat an assignment in its undo window as still active, so its banner keeps
+  // showing where the row was instead of vanishing the moment it's completed.
+  const active = (a) => a.status !== 'completed' || a.id in pending
+  const isPastDue = (a) => new Date(a.dueDate) < now
+
+  // Past due: anything not completed whose due date has already passed —
+  // including quizzes and exams, which are never flagged "overdue" elsewhere.
+  const pastDue = [...assignments]
+    .filter((a) => active(a) && isPastDue(a))
+    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+
+  // Upcoming: not-yet-due work landing today or within the week.
+  const UPCOMING = ['today', 'week']
   const deadlines = [...assignments]
-    .filter((a) => a.id in pending || NEAR_TERM.includes(bucketFor(a)))
+    .filter((a) => active(a) && !isPastDue(a) && UPCOMING.includes(dueMeta(a.dueDate, a.type).bucket))
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
 
   const studyStats = statusCounts(assignments.filter((a) => isStudyType(a.type)))
 
   const subtitle = loading
     ? 'Loading your work…'
-    : deadlines.length === 0
-      ? "You're all caught up — nice work."
-      : `You have ${deadlines.length} ${deadlines.length === 1 ? 'deadline' : 'deadlines'} due within a week.`
+    : pastDue.length > 0
+      ? `You have ${pastDue.length} past-due ${pastDue.length === 1 ? 'item' : 'items'} to catch up on.`
+      : deadlines.length === 0
+        ? "You're all caught up — nice work."
+        : `You have ${deadlines.length} ${deadlines.length === 1 ? 'deadline' : 'deadlines'} due within a week.`
+
+  // A single deadline/past-due row (or its undo banner). Shared by both lists.
+  function renderItem(a) {
+    if (a.id in pending) {
+      return <CompletedBanner key={a.id} title={a.title} onUndo={() => undo(a.id)} />
+    }
+    const course = courseById(courses, a.courseId)
+    const tone = typeAccent(a.type)
+    const due = new Date(a.dueDate)
+    return (
+      <Fragment key={a.id}>
+        {/* Desktop: original row */}
+        <li className="relative hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-card dark:border-ink-border dark:bg-ink-card md:block">
+          <span className={`absolute inset-y-0 left-0 w-1.5 rounded-l-2xl ${tone.bar}`} />
+          <div className="flex items-center gap-4 pl-2">
+            <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-200">
+              <span className="text-[10px] font-bold tracking-wide">{MONTHS3[due.getMonth()]}</span>
+              <span className="text-xl font-extrabold leading-none">{due.getDate()}</span>
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${tone.soft}`}>
+                  {a.type}
+                </span>
+                <span className="flex items-center gap-1 text-xs text-slate-400">
+                  <ClockIcon className="h-3.5 w-3.5" />
+                  {due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                </span>
+              </div>
+              <p className="mt-1 truncate text-[15px] font-bold text-slate-800 dark:text-slate-100">
+                {a.title}
+              </p>
+              {(a.notes || course) && (
+                <p className="truncate text-sm text-slate-400">{a.notes || course?.name}</p>
+              )}
+              <ProblemProgress done={a.completedProblems} total={a.totalProblems} className="mt-1.5" />
+            </div>
+            <div className="flex shrink-0 flex-col items-end gap-2">
+              <StatusSelect value={a.status} type={a.type} onChange={(s) => changeStatus(a, s)} />
+              <button
+                onClick={() => navigate(`/assignments/${a.id}/edit`)}
+                className="rounded-lg p-1 text-slate-400 transition hover:text-brand-600 dark:hover:text-brand-300"
+                title="Edit"
+              >
+                <EditIcon className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </li>
+
+        {/* Mobile: stacked card */}
+        <li className="relative rounded-2xl border border-slate-200 bg-white p-4 pl-5 shadow-card dark:border-ink-border dark:bg-ink-card md:hidden">
+          <span className={`absolute inset-y-0 left-0 w-1.5 rounded-l-2xl ${tone.bar}`} />
+          <div className="flex items-start gap-3.5">
+            <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-200">
+              <span className="text-[10px] font-bold tracking-wide">{MONTHS3[due.getMonth()]}</span>
+              <span className="text-lg font-extrabold leading-none">{due.getDate()}</span>
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-2">
+                <p className="min-w-0 break-words text-[15px] font-bold text-slate-800 dark:text-slate-100">
+                  {a.title}
+                </p>
+                <button
+                  onClick={() => navigate(`/assignments/${a.id}/edit`)}
+                  className="-mr-1 -mt-1 shrink-0 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-700 dark:hover:text-brand-300"
+                  title="Edit"
+                >
+                  <EditIcon className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="mt-0.5 flex items-center gap-2 text-sm text-slate-400">
+                {(a.notes || course) && (
+                  <span className="min-w-0 truncate">{a.notes || course?.name}</span>
+                )}
+                <span className="flex shrink-0 items-center gap-1 text-xs">
+                  <ClockIcon className="h-3.5 w-3.5" />
+                  {due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                </span>
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+                <StatusSelect value={a.status} type={a.type} onChange={(s) => changeStatus(a, s)} />
+                <ProblemProgress done={a.completedProblems} total={a.totalProblems} />
+              </div>
+            </div>
+          </div>
+        </li>
+      </Fragment>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-6 md:px-8 md:py-8">
@@ -103,8 +206,26 @@ export default function Dashboard() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Upcoming deadlines */}
-        <section className="lg:col-span-2">
+        <div className="space-y-8 lg:col-span-2">
+          {/* Past due — anything not completed whose due date has passed,
+              including quizzes/exams that are never flagged "overdue". */}
+          {!loading && pastDue.length > 0 && (
+            <section>
+              <div className="mb-4 flex items-center gap-2">
+                <AlertIcon className="h-5 w-5 text-rose-500" />
+                <h2 className="font-display text-lg font-bold text-slate-800 dark:text-slate-100">
+                  Past Due
+                </h2>
+                <span className="rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-bold text-rose-600 dark:bg-rose-500/10 dark:text-rose-400">
+                  {pastDue.length}
+                </span>
+              </div>
+              <ul className="space-y-3">{pastDue.map(renderItem)}</ul>
+            </section>
+          )}
+
+          {/* Upcoming deadlines */}
+          <section>
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <ClockIcon className="h-5 w-5 text-brand-500" />
@@ -125,98 +246,10 @@ export default function Dashboard() {
           ) : deadlines.length === 0 ? (
             <EmptyState icon={ClockIcon}>Nothing coming up — you're all caught up. 🎉</EmptyState>
           ) : (
-            <ul className="space-y-3">
-              {deadlines.map((a) => {
-                if (a.id in pending) {
-                  return <CompletedBanner key={a.id} title={a.title} onUndo={() => undo(a.id)} />
-                }
-                const course = courseById(courses, a.courseId)
-                const tone = typeAccent(a.type)
-                const due = new Date(a.dueDate)
-                return (
-                  <Fragment key={a.id}>
-                  {/* Desktop: original row */}
-                  <li className="relative hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-card dark:border-ink-border dark:bg-ink-card md:block">
-                    <span className={`absolute inset-y-0 left-0 w-1.5 rounded-l-2xl ${tone.bar}`} />
-                    <div className="flex items-center gap-4 pl-2">
-                      <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-200">
-                        <span className="text-[10px] font-bold tracking-wide">{MONTHS3[due.getMonth()]}</span>
-                        <span className="text-xl font-extrabold leading-none">{due.getDate()}</span>
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${tone.soft}`}>
-                            {a.type}
-                          </span>
-                          <span className="flex items-center gap-1 text-xs text-slate-400">
-                            <ClockIcon className="h-3.5 w-3.5" />
-                            {due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                          </span>
-                        </div>
-                        <p className="mt-1 truncate text-[15px] font-bold text-slate-800 dark:text-slate-100">
-                          {a.title}
-                        </p>
-                        {(a.notes || course) && (
-                          <p className="truncate text-sm text-slate-400">{a.notes || course?.name}</p>
-                        )}
-                        <ProblemProgress done={a.completedProblems} total={a.totalProblems} className="mt-1.5" />
-                      </div>
-                      <div className="flex shrink-0 flex-col items-end gap-2">
-                        <StatusSelect value={a.status} type={a.type} onChange={(s) => changeStatus(a, s)} />
-                        <button
-                          onClick={() => navigate(`/assignments/${a.id}/edit`)}
-                          className="rounded-lg p-1 text-slate-400 transition hover:text-brand-600 dark:hover:text-brand-300"
-                          title="Edit"
-                        >
-                          <EditIcon className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </li>
-
-                  {/* Mobile: stacked card */}
-                  <li className="relative rounded-2xl border border-slate-200 bg-white p-4 pl-5 shadow-card dark:border-ink-border dark:bg-ink-card md:hidden">
-                    <span className={`absolute inset-y-0 left-0 w-1.5 rounded-l-2xl ${tone.bar}`} />
-                    <div className="flex items-start gap-3.5">
-                      <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-200">
-                        <span className="text-[10px] font-bold tracking-wide">{MONTHS3[due.getMonth()]}</span>
-                        <span className="text-lg font-extrabold leading-none">{due.getDate()}</span>
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="min-w-0 break-words text-[15px] font-bold text-slate-800 dark:text-slate-100">
-                            {a.title}
-                          </p>
-                          <button
-                            onClick={() => navigate(`/assignments/${a.id}/edit`)}
-                            className="-mr-1 -mt-1 shrink-0 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-700 dark:hover:text-brand-300"
-                            title="Edit"
-                          >
-                            <EditIcon className="h-4 w-4" />
-                          </button>
-                        </div>
-                        <div className="mt-0.5 flex items-center gap-2 text-sm text-slate-400">
-                          {(a.notes || course) && (
-                            <span className="min-w-0 truncate">{a.notes || course?.name}</span>
-                          )}
-                          <span className="flex shrink-0 items-center gap-1 text-xs">
-                            <ClockIcon className="h-3.5 w-3.5" />
-                            {due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                          </span>
-                        </div>
-                        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
-                          <StatusSelect value={a.status} type={a.type} onChange={(s) => changeStatus(a, s)} />
-                          <ProblemProgress done={a.completedProblems} total={a.totalProblems} />
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  </Fragment>
-                )
-              })}
-            </ul>
+            <ul className="space-y-3">{deadlines.map(renderItem)}</ul>
           )}
-        </section>
+          </section>
+        </div>
 
         {/* Progress wheels */}
         <section className="space-y-6">
