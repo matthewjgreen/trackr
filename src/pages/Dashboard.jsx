@@ -6,6 +6,7 @@ import { bucketFor } from '../lib/due.js'
 import { isStudyType } from '../lib/status.js'
 import ProgressRing from '../components/ProgressRing.jsx'
 import StatusSelect from '../components/StatusSelect.jsx'
+import { useCompleteUndo, CompletedBanner } from '../components/CompleteUndo.jsx'
 import ProblemProgress from '../components/ProblemProgress.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import { SkeletonRows } from '../components/Skeleton.jsx'
@@ -75,11 +76,13 @@ function StatusWheel({ icon: Icon, iconClass, title, segments, counts, caption, 
 export default function Dashboard() {
   const { assignments, courses, stats, setStatus, loading } = useAssignments()
   const navigate = useNavigate()
+  const { pending, changeStatus, undo } = useCompleteUndo(setStatus)
 
   // Anything not completed that's overdue, due today, or due within 7 days.
+  // Assignments in their undo window are kept in place so the banner can show.
   const NEAR_TERM = ['overdue', 'today', 'week']
   const deadlines = [...assignments]
-    .filter((a) => NEAR_TERM.includes(bucketFor(a)))
+    .filter((a) => a.id in pending || NEAR_TERM.includes(bucketFor(a)))
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
 
   const studyStats = statusCounts(assignments.filter((a) => isStudyType(a.type)))
@@ -124,6 +127,9 @@ export default function Dashboard() {
           ) : (
             <ul className="space-y-3">
               {deadlines.map((a) => {
+                if (a.id in pending) {
+                  return <CompletedBanner key={a.id} title={a.title} onUndo={() => undo(a.id)} />
+                }
                 const course = courseById(courses, a.courseId)
                 const tone = typeAccent(a.type)
                 const due = new Date(a.dueDate)
@@ -156,7 +162,7 @@ export default function Dashboard() {
                         <ProblemProgress done={a.completedProblems} total={a.totalProblems} className="mt-1.5" />
                       </div>
                       <div className="flex shrink-0 flex-col items-end gap-2">
-                        <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
+                        <StatusSelect value={a.status} type={a.type} onChange={(s) => changeStatus(a, s)} />
                         <button
                           onClick={() => navigate(`/assignments/${a.id}/edit`)}
                           className="rounded-lg p-1 text-slate-400 transition hover:text-brand-600 dark:hover:text-brand-300"
@@ -199,7 +205,7 @@ export default function Dashboard() {
                           </span>
                         </div>
                         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
-                          <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
+                          <StatusSelect value={a.status} type={a.type} onChange={(s) => changeStatus(a, s)} />
                           <ProblemProgress done={a.completedProblems} total={a.totalProblems} />
                         </div>
                       </div>

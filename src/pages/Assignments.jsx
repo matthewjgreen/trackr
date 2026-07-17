@@ -4,6 +4,7 @@ import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
 import { accentFor, typeAccent } from '../lib/accents.js'
 import { dueMeta, bucketFor, DUE_BUCKETS } from '../lib/due.js'
 import StatusSelect from '../components/StatusSelect.jsx'
+import { useCompleteUndo, CompletedBanner } from '../components/CompleteUndo.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import { SkeletonRows } from '../components/Skeleton.jsx'
 import { SearchIcon, ListIcon, EditIcon, TrashIcon, typeIcon } from '../components/Icons.jsx'
@@ -18,6 +19,7 @@ const FILTERS = [
 export default function Assignments() {
   const { assignments, courses, setStatus, updateAssignment, removeAssignment, loading } = useAssignments()
   const navigate = useNavigate()
+  const { pending, changeStatus, undo } = useCompleteUndo(setStatus)
 
   function setProblems(a, n) {
     const done = Math.max(0, Math.min(a.totalProblems, n))
@@ -44,8 +46,14 @@ export default function Assignments() {
 
   const term = query.trim().toLowerCase()
 
+  // While an assignment's undo window is open it stays where it was before
+  // being completed (same filter match, same due bucket) instead of jumping to
+  // the Completed group.
+  const effStatus = (a) => (a.id in pending ? pending[a.id] : a.status)
+  const effBucket = (a) => (a.id in pending ? dueMeta(a.dueDate, a.type).bucket : bucketFor(a))
+
   const filtered = assignments
-    .filter((a) => (filter === 'all' ? true : a.status === filter))
+    .filter((a) => (filter === 'all' ? true : effStatus(a) === filter))
     .filter((a) => {
       if (!term) return true
       const course = courseById(courses, a.courseId)
@@ -60,7 +68,7 @@ export default function Assignments() {
   // Group into Overdue / Today / This week / Later / Completed.
   const grouped = DUE_BUCKETS.map((b) => ({
     ...b,
-    items: filtered.filter((a) => bucketFor(a) === b.key),
+    items: filtered.filter((a) => effBucket(a) === b.key),
   })).filter((g) => g.items.length > 0)
 
   function renderRow(a) {
@@ -136,7 +144,7 @@ export default function Assignments() {
               Critical
             </span>
           )}
-          <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
+          <StatusSelect value={a.status} type={a.type} onChange={(s) => changeStatus(a, s)} />
           <button
             onClick={() => navigate(`/assignments/${a.id}/edit`)}
             className="shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-700 dark:hover:text-brand-300"
@@ -204,7 +212,7 @@ export default function Assignments() {
             </div>
 
             <div className="mt-2.5">
-              <StatusSelect value={a.status} type={a.type} onChange={(s) => setStatus(a.id, s)} />
+              <StatusSelect value={a.status} type={a.type} onChange={(s) => changeStatus(a, s)} />
             </div>
 
             {a.totalProblems > 0 && (
@@ -311,7 +319,15 @@ export default function Assignments() {
                   {g.items.length}
                 </span>
               </div>
-              <ul className="space-y-3">{g.items.map(renderRow)}</ul>
+              <ul className="space-y-3">
+                {g.items.map((a) =>
+                  a.id in pending ? (
+                    <CompletedBanner key={a.id} title={a.title} onUndo={() => undo(a.id)} />
+                  ) : (
+                    renderRow(a)
+                  )
+                )}
+              </ul>
             </div>
           ))}
         </div>
