@@ -52,6 +52,11 @@ export default function Assignments() {
   const effStatus = (a) => (a.id in pending ? pending[a.id] : a.status)
   const effBucket = (a) => (a.id in pending ? dueMeta(a.dueDate, a.type).bucket : bucketFor(a))
 
+  // Alphabetical + numerical ("natural") comparison so that, e.g.,
+  // "Homework 2" sorts before "Homework 10" instead of after it.
+  const naturalCompare = (x, y) =>
+    (x ?? '').localeCompare(y ?? '', undefined, { numeric: true, sensitivity: 'base' })
+
   const filtered = assignments
     .filter((a) => (filter === 'all' ? true : effStatus(a) === filter))
     .filter((a) => {
@@ -63,7 +68,19 @@ export default function Assignments() {
         .toLowerCase()
       return haystack.includes(term)
     })
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+    // Due date stays primary (the page groups into due buckets). When items
+    // fall due at the same time, keep each class together, then order that
+    // class's assignments alphabetically/numerically by title.
+    .sort((a, b) => {
+      const byDue = new Date(a.dueDate) - new Date(b.dueDate)
+      if (byDue !== 0) return byDue
+      const byCourse = naturalCompare(
+        courseById(courses, a.courseId)?.name,
+        courseById(courses, b.courseId)?.name
+      )
+      if (byCourse !== 0) return byCourse
+      return naturalCompare(a.title, b.title)
+    })
 
   // Group into Overdue / Today / This week / Later / Completed.
   const grouped = DUE_BUCKETS.map((b) => ({
