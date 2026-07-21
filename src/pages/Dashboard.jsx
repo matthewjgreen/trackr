@@ -84,17 +84,35 @@ export default function Dashboard() {
   const active = (a) => a.status !== 'completed' || a.id in pending
   const isPastDue = (a) => new Date(a.dueDate) < now
 
+  // Alphabetical + numerical ("natural") comparison so that, e.g.,
+  // "Homework 2" sorts before "Homework 10" instead of after it.
+  const naturalCompare = (x, y) =>
+    (x ?? '').localeCompare(y ?? '', undefined, { numeric: true, sensitivity: 'base' })
+
+  // Due date stays primary. When items fall due at the same time, keep each
+  // class together, then order that class's assignments by title.
+  const byDueThenClass = (a, b) => {
+    const byDue = new Date(a.dueDate) - new Date(b.dueDate)
+    if (byDue !== 0) return byDue
+    const byCourse = naturalCompare(
+      courseById(courses, a.courseId)?.name,
+      courseById(courses, b.courseId)?.name
+    )
+    if (byCourse !== 0) return byCourse
+    return naturalCompare(a.title, b.title)
+  }
+
   // Past due: anything not completed whose due date has already passed —
   // including quizzes and exams, which are never flagged "overdue" elsewhere.
   const pastDue = [...assignments]
     .filter((a) => active(a) && isPastDue(a))
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+    .sort(byDueThenClass)
 
   // Upcoming: not-yet-due work landing today or within the week.
   const UPCOMING = ['today', 'week']
   const deadlines = [...assignments]
     .filter((a) => active(a) && !isPastDue(a) && UPCOMING.includes(dueMeta(a.dueDate, a.type).bucket))
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+    .sort(byDueThenClass)
 
   const studyStats = statusCounts(assignments.filter((a) => isStudyType(a.type)))
 
